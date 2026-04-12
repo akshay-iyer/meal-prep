@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Rasoi">
+<meta name="theme-color" content="#1C0F07">
+<title>Rasoi</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --saffron:#D4651A;
+  --gold:#C8902A;
+  --cream:#FAF4EC;
+  --deep:#1C0F07;
+  --bark:#3A1E0A;
+  --muted:#957060;
+  --card:#FFFCF7;
+  --border:#E6D0B8;
+  --green:#3D6B38;
+  --sb:env(safe-area-inset-bottom,0px);
+  --st:env(safe-area-inset-top,0px);
+}
+html,body{height:100%;background:var(--deep);overscroll-behavior:none}
+body{
+  font-family:'DM Sans',system-ui,sans-serif;
+  background:var(--cream);color:var(--bark);
+  max-width:430px;margin:0 auto;
+  min-height:100%;display:flex;flex-direction:column;
+  overflow-x:hidden;
+}
+
+.hdr{
+  background:var(--deep);
+  padding:calc(var(--st) + 14px) 18px 12px;
+  position:sticky;top:0;z-index:50;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.logo{font-family:'Lora',serif;font-size:1.75rem;color:var(--gold);letter-spacing:-0.5px}
+.hdr-sub{font-size:0.65rem;color:var(--muted);letter-spacing:2px;text-transform:uppercase}
+
+.tabs{
+  background:var(--deep);display:flex;
+  border-top:1px solid #2e1a0a;
+  position:sticky;top:calc(var(--st) + 55px);z-index:49;
+}
+.tab{
+  flex:1;padding:9px 2px 7px;text-align:center;
+  font-size:0.62rem;font-weight:600;color:var(--muted);
+  letter-spacing:0.8px;text-transform:uppercase;cursor:pointer;
+  border-bottom:2px solid transparent;transition:color 0.15s,border-color 0.15s;
+}
+.tab .ti{display:block;font-size:1.05rem;margin-bottom:2px}
+.tab.on{color:var(--gold);border-bottom-color:var(--gold)}
+
+.pane{display:none;flex:1;padding:14px 14px calc(14px + var(--sb))}
+.pane.on{display:block}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:12px}
+
+.vibe-row{display:flex;gap:7px;overflow-x:auto;padding-bottom:2px;margin-bottom:12px;scrollbar-width:none}
+.vibe-row::-webkit-scrollbar{display:none}
+.vchip{
+  flex-shrink:0;padding:7px 13px;border-radius:20px;
+  font-size:0.76rem;font-weight:600;border:1.5px solid var(--border);
+  background:var(--card);color:var(--bark);cursor:pointer;
+  transition:all 0.15s;white-space:nowrap;font-family:inherit;
+}
+.vchip.on{background:var(--saffron);border-color:var(--saffron);color:#fff}
+
+.btn{
+  display:block;width:100%;padding:14px;border:none;border-radius:13px;
+  font-size:0.95rem;font-weight:700;cursor:pointer;
+  font-family:inherit;letter-spacing:0.2px;transition:opacity 0.15s,transform 0.1s;
+}
+.btn:active{transform:scale(0.97);opacity:0.88}
+.btn-primary{background:var(--saffron);color:#fff}
+.btn-outline{background:transparent;border:1.5px solid var(--saffron);color:var(--saffron);margin-top:8px}
+.btn-sm{display:inline-block;width:auto;padding:6px 13px;font-size:0.75rem;border-radius:9px}
+
+.week-grid{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.day-card{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.day-hdr{
+  background:var(--bark);color:var(--gold);
+  padding:7px 13px;display:flex;justify-content:space-between;align-items:center;
+  font-family:'Lora',serif;font-size:0.9rem;
+}
+.day-tag{font-family:'DM Sans',sans-serif;font-size:0.6rem;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
+.meals-grid{display:grid;grid-template-columns:1fr 1fr}
+.meal-cell{padding:10px 11px;border-right:1px solid var(--border)}
+.meal-cell:last-child{border-right:none}
+.meal-label{font-size:0.6rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);font-weight:600;margin-bottom:3px}
+.meal-name{font-size:0.82rem;font-weight:600;line-height:1.3;margin-bottom:5px}
+.meal-same{font-size:0.82rem;color:var(--muted);font-style:italic;margin-bottom:5px}
+.badge{font-size:0.6rem;padding:2px 6px;border-radius:8px;font-weight:600;display:inline-block;margin-right:3px}
+.b-quick{background:#DCEDC8;color:#2E6B1A}
+.b-medium{background:#FFF3E0;color:#C65000}
+.b-prep{background:#E3F2FD;color:#1565C0}
+.b-long{background:#EDE7F6;color:#4527A0}
+.b-same{background:#E8F5E9;color:#2E7D32}
+.edit-btn{
+  font-size:0.62rem;color:var(--muted);cursor:pointer;
+  background:none;border:none;font-family:inherit;padding:0;
+  text-decoration:underline;margin-top:2px;display:inline-block;
+}
+
+.modal-bg{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,0.6);z-index:200;
+  align-items:flex-end;justify-content:center;
+}
+.modal-bg.on{display:flex}
+.modal{
+  background:var(--card);border-radius:20px 20px 0 0;
+  width:100%;max-width:430px;max-height:88vh;
+  display:flex;flex-direction:column;
+}
+.modal-hdr{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 16px 0;flex-shrink:0;
+}
+.modal-title{font-family:'Lora',serif;font-size:1.05rem}
+.modal-close{font-size:1.4rem;color:var(--muted);cursor:pointer;background:none;border:none;line-height:1}
+.modal-search-wrap{padding:10px 16px;flex-shrink:0}
+.modal-list{overflow-y:auto;padding:0 16px calc(16px + var(--sb));flex:1}
+.meal-option{
+  padding:11px 13px;border:1.5px solid var(--border);
+  border-radius:11px;margin-bottom:8px;cursor:pointer;transition:all 0.12s;
+}
+.meal-option.selected{border-color:var(--saffron);background:#FEF0E6}
+.opt-name{font-size:0.88rem;font-weight:600;margin-bottom:3px}
+.opt-meta{font-size:0.7rem;color:var(--muted);line-height:1.35}
+
+.gcat-hdr{
+  font-size:0.62rem;text-transform:uppercase;letter-spacing:2px;
+  color:var(--muted);font-weight:700;
+  padding:10px 0 5px;border-bottom:1px solid var(--border);margin-bottom:8px;
+}
+.gitems{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:4px}
+.gitem{
+  padding:5px 11px;border-radius:9px;font-size:0.78rem;
+  border:1px solid var(--border);background:var(--card);cursor:pointer;
+  transition:all 0.12s;user-select:none;
+}
+.gitem.have{background:var(--green);border-color:var(--green);color:#fff;text-decoration:line-through;opacity:0.55}
+
+.export-bar{
+  position:sticky;bottom:0;
+  background:var(--cream);border-top:1px solid var(--border);
+  padding:10px 14px calc(10px + var(--sb));
+  display:none;gap:8px;
+}
+
+.recipe-item{
+  padding:11px 13px;border:1px solid var(--border);
+  border-radius:11px;margin-bottom:8px;background:var(--card);
+}
+.recipe-name{font-size:0.88rem;font-weight:600;margin-bottom:3px}
+.recipe-meta{font-size:0.7rem;color:var(--muted);line-height:1.4}
+
+.tips{
+  background:linear-gradient(135deg,#FFF8EE,#FEF2DC);
+  border:1px solid #E8C87A;border-radius:12px;
+  padding:11px 13px;font-size:0.78rem;line-height:1.6;margin-bottom:14px;
+}
+.tips strong{color:var(--saffron)}
+
+.empty{text-align:center;padding:40px 20px;color:var(--muted);font-size:0.88rem;line-height:1.7}
+.em{font-size:2.2rem;margin-bottom:10px}
+
+.search{
+  width:100%;padding:10px 13px;border:1.5px solid var(--border);
+  border-radius:10px;font-size:0.85rem;font-family:inherit;
+  background:var(--card);color:var(--bark);margin-bottom:12px;outline:none;
+}
+.search:focus{border-color:var(--saffron)}
+
+.install-hint{
+  background:var(--deep);color:var(--muted);
+  font-size:0.72rem;line-height:1.5;
+  padding:10px 14px;text-align:center;flex-shrink:0;
+}
+.install-hint strong{color:var(--gold)}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="logo">Rasoi</div>
+  <div class="hdr-sub" id="weekLabel"></div>
+</div>
+
+<div class="tabs">
+  <div class="tab on" onclick="showTab('plan')" id="tab-plan"><span class="ti">📅</span>Plan</div>
+  <div class="tab" onclick="showTab('grocery')" id="tab-grocery"><span class="ti">🛒</span>Grocery</div>
+  <div class="tab" onclick="showTab('recipes')" id="tab-recipes"><span class="ti">📖</span>Recipes</div>
+</div>
+
+<!-- PLAN -->
+<div class="pane on" id="pane-plan">
+  <div class="vibe-row" id="vibeRow"></div>
+
+  <div class="card">
+    <div style="font-size:0.72rem;color:var(--muted);margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:1px">Cook once, eat for both meals?</div>
+    <div style="display:flex;gap:8px">
+      <button class="vchip on" id="btnNo" onclick="setSameDay(false)">Different meals</button>
+      <button class="vchip" id="btnYes" onclick="setSameDay(true)">Same dish × 2</button>
+    </div>
+  </div>
+
+  <button class="btn btn-primary" onclick="generatePlan()">✦ Generate This Week</button>
+  <div id="planArea"></div>
+</div>
+
+<!-- GROCERY -->
+<div class="pane" id="pane-grocery">
+  <div id="groceryArea">
+    <div class="empty"><div class="em">🛒</div>Generate a meal plan first.</div>
+  </div>
+  <div class="export-bar" id="exportBar">
+    <button class="btn btn-primary btn-sm" onclick="exportList()">📤 Share needed items</button>
+    <button class="btn btn-outline btn-sm" onclick="clearHave()">Reset</button>
+  </div>
+</div>
+
+<!-- RECIPES -->
+<div class="pane" id="pane-recipes">
+  <input class="search" placeholder="Search recipes…" oninput="filterRecipes(this.value)">
+  <div id="recipeList"></div>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal-bg" id="editModal" onclick="bgClose(event)">
+  <div class="modal">
+    <div class="modal-hdr">
+      <div class="modal-title" id="editTitle">Choose meal</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-search-wrap">
+      <input class="search" style="margin-bottom:0" placeholder="Filter…" oninput="filterModal(this.value)" id="modalSearch">
+    </div>
+    <div class="modal-list" id="modalList"></div>
+  </div>
+</div>
+
+<div class="install-hint" id="installHint">
+  📲 <strong>Install on iPhone:</strong> tap Share → Add to Home Screen
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+// RECIPE DATABASE
+// Add / edit / remove freely. Each recipe needs:
+//   name, time ("quick"|"medium"|"prep"|"long"),
+//   note (short tip), ingredients (array of strings)
+// ─────────────────────────────────────────────
+var RECIPES = [
+  // EXISTING
+  {name:"Ivy Gourd Curry + Chapati", time:"quick",
+   note:"Use frozen cut tindora. Quick tadka with mustard + hing.",
+   ingredients:["Frozen ivy gourd (tindora)","Frozen roti","Mustard seeds","Hing","Turmeric","Red chili powder","Coriander powder","Oil","Salt"]},
+
+  {name:"Tofu Curry + Chapati", time:"quick",
+   note:"Boost with kasuri methi and a splash of cream at the end.",
+   ingredients:["Firm tofu","Frozen roti","Onions","Tomatoes","Ginger","Garlic","Kasuri methi","Fresh cream","Garam masala","Oil","Salt"]},
+
+  {name:"Moong / Matki Curry + Rice", time:"prep",
+   note:"Soak overnight. Pressure cook, temper with garlic.",
+   ingredients:["Whole moong or moth beans","Basmati rice","Onions","Tomatoes","Ginger","Garlic","Cumin seeds","Turmeric","Coriander powder","Garam masala","Oil","Salt"]},
+
+  {name:"Dal + Rice + Capsicum Sabzi", time:"medium",
+   note:"Toor dal pressure cooked. Capsicum dry sabzi on the side.",
+   ingredients:["Toor dal","Basmati rice","Capsicum","Onions","Tomatoes","Cumin seeds","Turmeric","Red chili powder","Ghee","Oil","Salt"]},
+
+  {name:"Chole + Rice", time:"prep",
+   note:"Soak chickpeas overnight. Pressure cook 6 whistles.",
+   ingredients:["Dried chickpeas","Basmati rice","Onions","Tomatoes","Ginger","Garlic","Chole masala","Cumin seeds","Bay leaf","Amchur","Oil","Salt"]},
+
+  {name:"Rajma Chawal", time:"prep",
+   note:"Soak overnight. Pressure cook 8 whistles. Classic gravy.",
+   ingredients:["Kidney beans","Basmati rice","Onions","Tomatoes","Ginger","Garlic","Cumin seeds","Coriander powder","Garam masala","Kasuri methi","Ghee","Salt"]},
+
+  {name:"Paneer Curry + Chapati", time:"quick",
+   note:"Use frozen cubed paneer. Quick makhani-style sauce.",
+   ingredients:["Frozen paneer cubed","Frozen roti","Onions","Tomatoes","Ginger","Garlic","Fresh cream","Kasuri methi","Garam masala","Butter","Salt"]},
+
+  {name:"Cabbage Sabzi + Dal + Rice", time:"medium",
+   note:"Shred and cook cabbage with mustard + curry leaves. Simple dal.",
+   ingredients:["Cabbage","Toor dal","Basmati rice","Mustard seeds","Curry leaves","Green chilies","Turmeric","Oil","Salt"]},
+
+  {name:"Gobi Sabzi + Chapati", time:"medium",
+   note:"Dry roast whole spices first. Add potato for aloo gobi.",
+   ingredients:["Cauliflower","Frozen roti","Onions","Tomatoes","Cumin seeds","Turmeric","Coriander powder","Amchur","Oil","Salt"]},
+
+  {name:"Thai Green Curry + Rice", time:"medium",
+   note:"Store-bought paste. Coconut milk + whatever veg you have.",
+   ingredients:["Thai green curry paste","Coconut milk (canned)","Basmati rice","Firm tofu","Capsicum","Oil","Salt"]},
+
+  {name:"Tamil Kootu + Rice", time:"medium",
+   note:"Needs cucumber and fresh coconut. Chana dal base.",
+   ingredients:["Cucumber","Fresh coconut grated","Chana dal","Basmati rice","Mustard seeds","Curry leaves","Cumin","Turmeric","Red chilies","Oil","Salt"]},
+
+  // NEW — QUICK
+  {name:"Jeera Rice + Tadka Dal", time:"quick",
+   note:"Toast cumin in ghee until it pops. Masoor dal, 20 mins flat.",
+   ingredients:["Masoor dal","Basmati rice","Cumin seeds","Ghee","Onions","Tomatoes","Turmeric","Red chili powder","Garlic","Salt"]},
+
+  {name:"Aloo Tamatar Sabzi + Chapati", time:"quick",
+   note:"Potatoes always stocked. Mash a few pieces into the gravy.",
+   ingredients:["Potatoes","Tomatoes","Frozen roti","Cumin seeds","Ginger","Green chilies","Turmeric","Coriander powder","Oil","Salt"]},
+
+  {name:"Peas Pulao + Raita", time:"quick",
+   note:"Whole spices: cardamom, cloves, bay leaf. Fried onions on top.",
+   ingredients:["Frozen green peas","Basmati rice","Full-fat yogurt","Cardamom","Cloves","Bay leaf","Onions","Ghee","Cumin seeds","Salt"]},
+
+  {name:"Rasam + Rice + Papad", time:"quick",
+   note:"Keep rasam powder and tamarind paste stocked. 15 mins.",
+   ingredients:["Rasam powder","Tamarind paste","Basmati rice","Papad","Tomatoes","Mustard seeds","Curry leaves","Ghee","Salt"]},
+
+  {name:"Khichdi + Ghee + Papad", time:"quick",
+   note:"Moong dal + rice together. Heavy on the ghee. Pure comfort.",
+   ingredients:["Moong dal split","Basmati rice","Ghee","Papad","Cumin seeds","Turmeric","Ginger","Salt"]},
+
+  {name:"Curd Rice + Pickle + Papad", time:"quick",
+   note:"Temper with mustard + curry leaves poured over cold curd rice.",
+   ingredients:["Basmati rice","Full-fat yogurt","Mixed pickle","Papad","Mustard seeds","Curry leaves","Ghee","Salt"]},
+
+  // NEW — MEDIUM
+  {name:"Palak Paneer + Chapati", time:"medium",
+   note:"Blanch and blend spinach. Batch-freeze the base. Add paneer fresh.",
+   ingredients:["Frozen cut spinach","Frozen paneer cubed","Frozen roti","Onions","Tomatoes","Ginger","Garlic","Fresh cream","Garam masala","Cumin seeds","Oil","Salt"]},
+
+  {name:"Matar Paneer + Rice", time:"medium",
+   note:"Frozen peas + frozen paneer. Rich tomato-onion gravy, 25 mins.",
+   ingredients:["Frozen paneer cubed","Frozen green peas","Basmati rice","Onions","Tomatoes","Ginger","Garlic","Kasuri methi","Fresh cream","Cumin seeds","Oil","Salt"]},
+
+  {name:"Aloo Matar Curry + Roti", time:"medium",
+   note:"Pressure cook potatoes and peas together. Classic comfort.",
+   ingredients:["Potatoes","Frozen green peas","Frozen roti","Onions","Tomatoes","Ginger","Garlic","Cumin seeds","Coriander powder","Garam masala","Oil","Salt"]},
+
+  {name:"Kadhi Pakora + Rice", time:"medium",
+   note:"Yogurt-besan base. Air fry the pakoras instead of deep frying.",
+   ingredients:["Full-fat yogurt","Besan (chickpea flour)","Basmati rice","Onions","Mustard seeds","Curry leaves","Cumin seeds","Turmeric","Red chili powder","Oil","Salt"]},
+
+  {name:"Dum Aloo + Paratha", time:"medium",
+   note:"Air fry baby potatoes first for crisp skin. Yogurt-tomato gravy.",
+   ingredients:["Baby potatoes","Frozen roti","Full-fat yogurt","Tomatoes","Ginger","Garlic","Cumin seeds","Coriander powder","Garam masala","Kasuri methi","Oil","Salt"]},
+
+  {name:"Mixed Veg Handi + Rice", time:"medium",
+   note:"Dump whatever veg you have. Heavy cream at end = restaurant feel.",
+   ingredients:["Basmati rice","Onions","Tomatoes","Mixed vegetables","Fresh cream","Ginger","Garlic","Kasuri methi","Garam masala","Butter","Salt"]},
+
+  {name:"Veg Pulao + Boondi Raita", time:"medium",
+   note:"One pot. Whole spices + vegetables. Easier than biryani.",
+   ingredients:["Basmati rice","Mixed vegetables","Full-fat yogurt","Boondi","Cardamom","Cloves","Bay leaf","Onions","Ghee","Cumin seeds","Salt"]},
+
+  // AIR FRYER / OVEN
+  {name:"Air Fryer Paneer Tikka + Dal Rice", time:"medium",
+   note:"Marinate paneer in yogurt + tandoori masala. Air fry 12 min 200C.",
+   ingredients:["Frozen paneer cubed","Full-fat yogurt","Tandoori masala","Toor dal","Basmati rice","Capsicum","Onions","Lemon","Oil","Salt"]},
+
+  {name:"Oven Roasted Gobi + Rajma Rice", time:"medium",
+   note:"Roast cauliflower at 220C for 25 min. Use canned rajma to save time.",
+   ingredients:["Cauliflower","Canned kidney beans","Basmati rice","Cumin seeds","Coriander powder","Turmeric","Amchur","Oil","Onions","Tomatoes","Salt"]},
+
+  {name:"Air Fryer Aloo Chaat + Tadka Dal", time:"medium",
+   note:"Air fry cubed potatoes 15 min. Toss in chaat masala. Dal alongside.",
+   ingredients:["Potatoes","Chaat masala","Masoor dal","Cumin seeds","Ghee","Tamarind paste","Coriander leaves","Amchur","Oil","Salt"]},
+
+  {name:"Stuffed Capsicum + Rice", time:"medium",
+   note:"Fill capsicums with spiced paneer + peas. Bake 200C for 25 min.",
+   ingredients:["Capsicum","Frozen paneer cubed","Frozen green peas","Basmati rice","Onions","Tomatoes","Garam masala","Oil","Salt"]},
+
+  // WEEKEND
+  {name:"Pav Bhaji", time:"medium",
+   note:"Batch bhaji freezes well. Make a big pot on Sunday.",
+   ingredients:["Potatoes","Frozen green peas","Cauliflower","Onions","Tomatoes","Pav rolls","Butter","Pav bhaji masala","Coriander leaves","Lemon","Salt"]},
+
+  {name:"Veg Biryani", time:"long",
+   note:"Ranveer Brar dum sealing technique. Worth the weekend effort.",
+   ingredients:["Basmati rice","Mixed vegetables","Full-fat yogurt","Fried onions","Saffron","Cardamom","Cloves","Bay leaf","Ghee","Mint leaves","Coriander leaves","Biryani masala","Salt"]}
+];
+
+// ─────────────────────────────────────────────
+// PANTRY — always keep stocked, shown in grocery tab
+// ─────────────────────────────────────────────
+var PANTRY = {
+  "Pantry — Always Have": [
+    "Toor dal","Moong dal","Masoor dal","Chana dal",
+    "Basmati rice","Whole wheat atta",
+    "Cumin seeds","Mustard seeds","Hing","Turmeric",
+    "Red chili powder","Coriander powder","Garam masala",
+    "Amchur","Kasuri methi","Chaat masala","Rasam powder",
+    "Tamarind paste","Bay leaves","Cardamom","Cloves",
+    "Oil","Ghee","Salt"
+  ],
+  "Freeze — Restock Monthly": [
+    "Frozen paneer cubed","Frozen green peas",
+    "Frozen ivy gourd","Frozen cut spinach","Frozen roti","Firm tofu"
+  ],
+  "Dairy — Weekly": ["Full-fat yogurt","Fresh cream","Butter","Milk"],
+  "Legumes to Soak": ["Dried chickpeas","Kidney beans","Whole moong","Moth beans"]
+};
+
+// ─────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────
+var DAYS = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+var vibe = "balanced";
+var sameDay = false;
+var plan = [];
+var haveItems = new Set();
+var editTarget = null;
+
+// ─────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────
+window.onload = function() {
+  setWeekLabel();
+  buildVibeRow();
+  loadState();
+  renderRecipes();
+  if (plan.length) { renderPlan(); renderGrocery(); }
+  if (window.navigator.standalone) {
+    document.getElementById('installHint').style.display = 'none';
+  }
+};
+
+function setWeekLabel() {
+  var now = new Date();
+  var mon = new Date(now);
+  mon.setDate(now.getDate() - ((now.getDay() + 6) % 7));
+  var sun = new Date(mon);
+  sun.setDate(mon.getDate() + 6);
+  var fmt = function(d) { return d.toLocaleDateString('en-US',{month:'short',day:'numeric'}); };
+  document.getElementById('weekLabel').textContent = fmt(mon) + ' – ' + fmt(sun);
+}
+
+function buildVibeRow() {
+  var vibes = [
+    {id:'lazy', label:'😴 Lazy'},
+    {id:'balanced', label:'⚖️ Balanced'},
+    {id:'adventurous', label:'🔥 Adventurous'},
+    {id:'weekend', label:'👨‍🍳 Weekend Cook'}
+  ];
+  var html = '';
+  for (var i = 0; i < vibes.length; i++) {
+    var v = vibes[i];
+    html += '<button class="vchip' + (v.id === vibe ? ' on' : '') + '" onclick="setVibe(\'' + v.id + '\')">' + v.label + '</button>';
+  }
+  document.getElementById('vibeRow').innerHTML = html;
+}
+
+function setVibe(v) { vibe = v; buildVibeRow(); }
+
+function setSameDay(val) {
+  sameDay = val;
+  document.getElementById('btnYes').classList.toggle('on', val);
+  document.getElementById('btnNo').classList.toggle('on', !val);
+}
+
+// ─────────────────────────────────────────────
+// GENERATE
+// ─────────────────────────────────────────────
+function generatePlan() {
+  var pool = RECIPES.slice();
+  if (vibe === 'lazy') pool = pool.filter(function(r){ return r.time === 'quick'; });
+  if (vibe === 'balanced') pool = pool.filter(function(r){ return r.time !== 'long'; });
+
+  pool = shuffle(pool);
+  var used = {};
+  plan = [];
+
+  for (var i = 0; i < 7; i++) {
+    var isWeekend = i >= 5;
+    var dayPool = pool;
+    if (vibe === 'weekend' && !isWeekend) {
+      dayPool = pool.filter(function(r){ return r.time === 'quick' || r.time === 'medium'; });
+    }
+    var lunch = pickFrom(dayPool, used);
+    var dinner = sameDay ? lunch : pickFrom(dayPool, used);
+    plan.push({ day: DAYS[i], lunch: lunch, dinner: dinner });
+  }
+
+  saveState();
+  renderPlan();
+  renderGrocery();
+}
+
+function pickFrom(pool, used) {
+  var candidates = pool.filter(function(r){ return !used[r.name]; });
+  if (!candidates.length) candidates = pool;
+  var r = candidates[Math.floor(Math.random() * candidates.length)];
+  used[r.name] = true;
+  return r;
+}
+
+function shuffle(arr) {
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+  }
+  return a;
+}
+
+// ─────────────────────────────────────────────
+// RENDER PLAN
+// ─────────────────────────────────────────────
+function tbadge(t) {
+  var map = {quick:'b-quick ⚡ Quick', medium:'b-medium 🕐 Medium', prep:'b-prep 💧 Soak first', long:'b-long ⏳ Long cook'};
+  var s = (map[t] || map.medium).split(' ');
+  return '<span class="badge ' + s[0] + '">' + s.slice(1).join(' ') + '</span>';
+}
+
+function renderPlan() {
+  if (!plan.length) return;
+
+  var soakDays = [];
+  for (var i = 0; i < plan.length; i++) {
+    var d = plan[i];
+    if (d.lunch.time === 'prep' || d.dinner.time === 'prep') soakDays.push(d.day);
+  }
+
+  var html = '';
+  if (soakDays.length) {
+    html += '<div class="tips" style="margin-top:14px">🫘 <strong>Soak Sunday night</strong> for ' + soakDays.join(', ') + '</div>';
+  }
+
+  html += '<div class="week-grid">';
+  for (var i = 0; i < plan.length; i++) {
+    var d = plan[i];
+    var isWeekend = i >= 5;
+    var same = d.lunch.name === d.dinner.name;
+
+    html += '<div class="day-card">';
+    html += '<div class="day-hdr"><span>' + d.day + '</span><span class="day-tag">' + (isWeekend ? 'Weekend' : 'Weekday') + '</span></div>';
+    html += '<div class="meals-grid">';
+
+    // LUNCH
+    html += '<div class="meal-cell">';
+    html += '<div class="meal-label">Lunch</div>';
+    html += '<div class="meal-name">' + d.lunch.name + '</div>';
+    html += tbadge(d.lunch.time);
+    if (same) {
+      html += '<br><span class="badge b-same" style="margin-top:4px">cook once</span>';
+      html += '<br><button class="edit-btn" onclick="openEdit(' + i + ',\'both\')">change</button>';
+    } else {
+      html += '<br><button class="edit-btn" onclick="openEdit(' + i + ',\'lunch\')">change</button>';
+    }
+    html += '</div>';
+
+    // DINNER
+    html += '<div class="meal-cell">';
+    html += '<div class="meal-label">Dinner</div>';
+    if (same) {
+      html += '<div class="meal-same">Same as lunch ↑</div>';
+      html += '<span class="badge b-same">larger qty</span>';
+    } else {
+      html += '<div class="meal-name">' + d.dinner.name + '</div>';
+      html += tbadge(d.dinner.time);
+      html += '<br><button class="edit-btn" onclick="openEdit(' + i + ',\'dinner\')">change</button>';
+    }
+    html += '</div>';
+
+    html += '</div></div>';
+  }
+  html += '</div>';
+  document.getElementById('planArea').innerHTML = html;
+}
+
+// ─────────────────────────────────────────────
+// EDIT MODAL
+// ─────────────────────────────────────────────
+function openEdit(dayIdx, slot) {
+  editTarget = {dayIdx: dayIdx, slot: slot};
+  var label = slot === 'both' ? plan[dayIdx].day : plan[dayIdx].day + ' ' + slot;
+  document.getElementById('editTitle').textContent = 'Change — ' + label;
+  document.getElementById('modalSearch').value = '';
+  renderModalList('');
+  document.getElementById('editModal').classList.add('on');
+}
+
+function closeModal() {
+  document.getElementById('editModal').classList.remove('on');
+  editTarget = null;
+}
+
+function bgClose(e) {
+  if (e.target === document.getElementById('editModal')) closeModal();
+}
+
+function filterModal(q) { renderModalList(q); }
+
+function renderModalList(q) {
+  var q2 = q.toLowerCase();
+  var list = q2 ? RECIPES.filter(function(r){ return r.name.toLowerCase().indexOf(q2) !== -1; }) : RECIPES;
+  var cur = editTarget ? plan[editTarget.dayIdx].lunch.name : '';
+  var html = '';
+  for (var i = 0; i < list.length; i++) {
+    var r = list[i];
+    var sel = r.name === cur ? ' selected' : '';
+    // escape single quotes in name for onclick
+    var safeName = r.name.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    html += '<div class="meal-option' + sel + '" onclick="selectMeal(\'' + safeName + '\')">';
+    html += '<div class="opt-name">' + r.name + '</div>';
+    html += '<div class="opt-meta">' + tbadge(r.time) + ' ' + r.note + '</div>';
+    html += '</div>';
+  }
+  document.getElementById('modalList').innerHTML = html || '<div class="empty">No matches</div>';
+}
+
+function selectMeal(name) {
+  if (!editTarget) return;
+  var recipe = null;
+  for (var i = 0; i < RECIPES.length; i++) {
+    if (RECIPES[i].name === name) { recipe = RECIPES[i]; break; }
+  }
+  if (!recipe) return;
+  var di = editTarget.dayIdx;
+  var slot = editTarget.slot;
+  if (slot === 'lunch' || slot === 'both') plan[di].lunch = recipe;
+  if (slot === 'dinner' || slot === 'both') plan[di].dinner = recipe;
+  closeModal();
+  saveState();
+  renderPlan();
+  renderGrocery();
+}
+
+// ─────────────────────────────────────────────
+// GROCERY
+// ─────────────────────────────────────────────
+function getMealIngredients() {
+  var seen = {};
+  var items = [];
+  for (var i = 0; i < plan.length; i++) {
+    var meals = plan[i].lunch.name === plan[i].dinner.name
+      ? [plan[i].lunch]
+      : [plan[i].lunch, plan[i].dinner];
+    for (var j = 0; j < meals.length; j++) {
+      var ings = meals[j].ingredients || [];
+      for (var k = 0; k < ings.length; k++) {
+        if (!seen[ings[k]]) { seen[ings[k]] = true; items.push(ings[k]); }
+      }
+    }
+  }
+  return items.sort();
+}
+
+function renderGrocery() {
+  if (!plan.length) return;
+  var mealItems = getMealIngredients();
+
+  var html = '<div class="tips">Tap items you <strong>already have</strong> to cross them off. Then export the rest.</div>';
+
+  html += '<div class="gcat-hdr">This Week\'s Ingredients</div><div class="gitems">';
+  for (var i = 0; i < mealItems.length; i++) {
+    var item = mealItems[i];
+    var safeName = item.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    html += '<div class="gitem' + (haveItems.has(item) ? ' have' : '') + '" onclick="toggleHave(\'' + safeName + '\')">' + item + '</div>';
+  }
+  html += '</div>';
+
+  var cats = Object.keys(PANTRY);
+  for (var c = 0; c < cats.length; c++) {
+    var cat = cats[c];
+    var catItems = PANTRY[cat];
+    html += '<div class="gcat-hdr">' + cat + '</div><div class="gitems">';
+    for (var p = 0; p < catItems.length; p++) {
+      var item = catItems[p];
+      var safeName = item.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+      html += '<div class="gitem' + (haveItems.has(item) ? ' have' : '') + '" onclick="toggleHave(\'' + safeName + '\')">' + item + '</div>';
+    }
+    html += '</div>';
+  }
+
+  document.getElementById('groceryArea').innerHTML = html;
+  document.getElementById('exportBar').style.display = 'flex';
+}
+
+function toggleHave(item) {
+  if (haveItems.has(item)) haveItems.delete(item);
+  else haveItems.add(item);
+  saveState();
+  renderGrocery();
+}
+
+function clearHave() {
+  haveItems.clear();
+  saveState();
+  renderGrocery();
+}
+
+function exportList() {
+  var mealItems = getMealIngredients();
+  var lines = ['RASOI — GROCERY LIST', ''];
+
+  var needed = mealItems.filter(function(i){ return !haveItems.has(i); });
+  if (needed.length) {
+    lines.push('THIS WEEK');
+    for (var i = 0; i < needed.length; i++) lines.push('- ' + needed[i]);
+    lines.push('');
+  }
+
+  var cats = Object.keys(PANTRY);
+  for (var c = 0; c < cats.length; c++) {
+    var cat = cats[c];
+    var catNeeded = PANTRY[cat].filter(function(i){ return !haveItems.has(i); });
+    if (catNeeded.length) {
+      lines.push(cat.toUpperCase());
+      for (var p = 0; p < catNeeded.length; p++) lines.push('- ' + catNeeded[p]);
+      lines.push('');
+    }
+  }
+
+  var text = lines.join('\n');
+  if (navigator.share) {
+    navigator.share({title:'Rasoi Grocery List', text:text});
+  } else {
+    navigator.clipboard.writeText(text).then(function(){ alert('Copied to clipboard!'); });
+  }
+}
+
+// ─────────────────────────────────────────────
+// RECIPES TAB
+// ─────────────────────────────────────────────
+function renderRecipes(q) {
+  q = (q || '').toLowerCase();
+  var list = q ? RECIPES.filter(function(r){ return r.name.toLowerCase().indexOf(q) !== -1; }) : RECIPES;
+  var timeLabel = {quick:'⚡ Quick (under 25 min)', medium:'🕐 Medium (25–40 min)', prep:'💧 Soak ahead', long:'⏳ Weekend cook'};
+  var groups = {quick:[], medium:[], prep:[], long:[]};
+  for (var i = 0; i < list.length; i++) {
+    var t = list[i].time;
+    if (groups[t]) groups[t].push(list[i]);
+  }
+  var html = '';
+  var keys = ['quick','medium','prep','long'];
+  for (var k = 0; k < keys.length; k++) {
+    var key = keys[k];
+    if (!groups[key].length) continue;
+    html += '<div class="gcat-hdr">' + timeLabel[key] + '</div>';
+    for (var i = 0; i < groups[key].length; i++) {
+      var r = groups[key][i];
+      html += '<div class="recipe-item"><div class="recipe-name">' + r.name + '</div><div class="recipe-meta">' + r.note + '</div></div>';
+    }
+  }
+  document.getElementById('recipeList').innerHTML = html || '<div class="empty">No recipes found</div>';
+}
+
+function filterRecipes(q) { renderRecipes(q); }
+
+// ─────────────────────────────────────────────
+// TABS
+// ─────────────────────────────────────────────
+function showTab(id) {
+  var panes = document.querySelectorAll('.pane');
+  var tabs = document.querySelectorAll('.tab');
+  for (var i = 0; i < panes.length; i++) panes[i].classList.remove('on');
+  for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('on');
+  document.getElementById('pane-' + id).classList.add('on');
+  document.getElementById('tab-' + id).classList.add('on');
+}
+
+// ─────────────────────────────────────────────
+// PERSIST
+// ─────────────────────────────────────────────
+function saveState() {
+  try {
+    localStorage.setItem('rasoi_plan', JSON.stringify(plan));
+    localStorage.setItem('rasoi_have', JSON.stringify(Array.from(haveItems)));
+    localStorage.setItem('rasoi_vibe', vibe);
+    localStorage.setItem('rasoi_same', JSON.stringify(sameDay));
+  } catch(e) {}
+}
+
+function loadState() {
+  try {
+    var p = localStorage.getItem('rasoi_plan');
+    if (p) plan = JSON.parse(p);
+    var h = localStorage.getItem('rasoi_have');
+    if (h) haveItems = new Set(JSON.parse(h));
+    var v = localStorage.getItem('rasoi_vibe');
+    if (v) { vibe = v; buildVibeRow(); }
+    var s = localStorage.getItem('rasoi_same');
+    if (s !== null) { sameDay = JSON.parse(s); setSameDay(sameDay); }
+  } catch(e) {}
+}
+</script>
+</body>
+</html>
