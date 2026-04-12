@@ -24,7 +24,7 @@
   --sb:env(safe-area-inset-bottom,0px);
   --st:env(safe-area-inset-top,0px);
 }
-html,body{height:100%;background:var(--deep);overscroll-behavior:none}
+html,body{height:100%;background:var(--cream);overscroll-behavior:none}
 body{
   font-family:'DM Sans',system-ui,sans-serif;
   background:var(--cream);color:var(--bark);
@@ -61,13 +61,12 @@ body{
 
 .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:12px}
 
-.vibe-row{display:flex;gap:7px;overflow-x:auto;padding-bottom:2px;margin-bottom:12px;scrollbar-width:none}
-.vibe-row::-webkit-scrollbar{display:none}
+.vibe-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:12px}
 .vchip{
-  flex-shrink:0;padding:7px 13px;border-radius:20px;
-  font-size:0.76rem;font-weight:600;border:1.5px solid var(--border);
+  width:100%;padding:9px 6px;border-radius:20px;
+  font-size:0.78rem;font-weight:600;border:1.5px solid var(--border);
   background:var(--card);color:var(--bark);cursor:pointer;
-  transition:all 0.15s;white-space:nowrap;font-family:inherit;
+  transition:all 0.15s;text-align:center;font-family:inherit;
 }
 .vchip.on{background:var(--saffron);border-color:var(--saffron);color:#fff}
 
@@ -211,7 +210,10 @@ body{
     </div>
   </div>
 
-  <button class="btn btn-primary" onclick="generatePlan()">✦ Generate This Week</button>
+  <div style="display:flex;gap:8px;margin-bottom:0">
+    <button class="btn btn-primary" style="flex:1" onclick="generatePlan()">✦ Generate</button>
+    <button class="btn btn-outline" style="flex:1;margin-top:0" onclick="sharePlan()">📤 Share Plan</button>
+  </div>
   <div id="planArea"></div>
 </div>
 
@@ -247,7 +249,8 @@ body{
 </div>
 
 <div class="install-hint" id="installHint">
-  📲 <strong>Install on iPhone:</strong> tap Share → Add to Home Screen
+  📲 <strong>iPhone:</strong> Share → Add to Home Screen &nbsp;·&nbsp; <strong>Android:</strong> Menu → Add to Home Screen
+  <div style="margin-top:5px;font-size:0.62rem;opacity:0.45">by Akshay Iyer</div>
 </div>
 
 <script>
@@ -331,7 +334,7 @@ var RECIPES = [
   // NEW — MEDIUM
   {name:"Palak Paneer + Chapati", time:"medium",
    note:"Blanch and blend spinach. Batch-freeze the base. Add paneer fresh.",
-   ingredients:["Frozen cut spinach","Frozen paneer cubed","Frozen roti","Onions","Tomatoes","Ginger","Garlic","Fresh cream","Garam masala","Cumin seeds","Oil","Salt"]},
+   ingredients:["Fresh spinach","Frozen paneer cubed","Frozen roti","Onions","Tomatoes","Ginger","Garlic","Fresh cream","Garam masala","Cumin seeds","Oil","Salt"]},
 
   {name:"Matar Paneer + Rice", time:"medium",
    note:"Frozen peas + frozen paneer. Rich tomato-onion gravy, 25 mins.",
@@ -399,9 +402,11 @@ var PANTRY = {
   ],
   "Freeze — Restock Monthly": [
     "Frozen paneer cubed","Frozen green peas",
-    "Frozen ivy gourd","Frozen cut spinach","Frozen roti","Firm tofu"
+    "Frozen ivy gourd","Frozen roti","Firm tofu"
   ],
   "Dairy — Weekly": ["Full-fat yogurt","Fresh cream","Butter","Milk"],
+  "Weekly Staples": ["Arnold bread","Unsalted peanut butter"],
+  "Fresh Produce — Weekly": ["Fresh spinach","Onions","Tomatoes","Ginger","Garlic","Green chilies","Coriander leaves","Potatoes","Lemons"],
   "Legumes to Soak": ["Dried chickpeas","Kidney beans","Whole moong","Moth beans"]
 };
 
@@ -443,8 +448,7 @@ function buildVibeRow() {
   var vibes = [
     {id:'lazy', label:'😴 Lazy'},
     {id:'balanced', label:'⚖️ Balanced'},
-    {id:'adventurous', label:'🔥 Adventurous'},
-    {id:'weekend', label:'👨‍🍳 Weekend Cook'}
+    {id:'adventurous', label:'🔥 Adventurous'}
   ];
   var html = '';
   for (var i = 0; i < vibes.length; i++) {
@@ -477,9 +481,6 @@ function generatePlan() {
   for (var i = 0; i < 7; i++) {
     var isWeekend = i >= 5;
     var dayPool = pool;
-    if (vibe === 'weekend' && !isWeekend) {
-      dayPool = pool.filter(function(r){ return r.time === 'quick' || r.time === 'medium'; });
-    }
     var lunch = pickFrom(dayPool, used);
     var dinner = sameDay ? lunch : pickFrom(dayPool, used);
     plan.push({ day: DAYS[i], lunch: lunch, dinner: dinner });
@@ -692,6 +693,36 @@ function clearHave() {
   haveItems.clear();
   saveState();
   renderGrocery();
+}
+
+function sharePlan() {
+  if (!plan.length) { alert('Generate a plan first!'); return; }
+  var lines = ['RASOI — MEAL PLAN', ''];
+  var weekEl = document.getElementById('weekLabel');
+  if (weekEl) lines.push(weekEl.textContent, '');
+  for (var i = 0; i < plan.length; i++) {
+    var d = plan[i];
+    var same = d.lunch.name === d.dinner.name;
+    lines.push(d.day.toUpperCase());
+    lines.push('  Lunch:  ' + d.lunch.name);
+    if (same) {
+      lines.push('  Dinner: (same — cook larger qty)');
+    } else {
+      lines.push('  Dinner: ' + d.dinner.name);
+    }
+    lines.push('');
+  }
+  var soakDays = [];
+  for (var i = 0; i < plan.length; i++) {
+    if (plan[i].lunch.time === 'prep' || plan[i].dinner.time === 'prep') soakDays.push(plan[i].day);
+  }
+  if (soakDays.length) lines.push('Soak ahead: ' + soakDays.join(', '));
+  var text = lines.join('\n');
+  if (navigator.share) {
+    navigator.share({title:'Rasoi Meal Plan', text:text});
+  } else {
+    navigator.clipboard.writeText(text).then(function(){ alert('Plan copied!'); });
+  }
 }
 
 function exportList() {
