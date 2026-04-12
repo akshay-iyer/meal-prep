@@ -184,6 +184,9 @@ body{
 }
 .install-hint strong{color:var(--gold)}
 </style>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 </head>
 <body>
 
@@ -818,6 +821,53 @@ function loadState() {
     var s = localStorage.getItem('rasoi_same');
     if (s !== null) { sameDay = JSON.parse(s); setSameDay(sameDay); }
   } catch(e) {}
+}
+</script>
+<script>
+// ── AUTO-UPDATE ──────────────────────────────
+// Registers a minimal service worker that always fetches fresh from network.
+// On any update, reloads the page automatically so GitHub pushes take effect.
+if ('serviceWorker' in navigator) {
+  var SW_CODE = [
+    "const VERSION = '" + Date.now() + "';",
+    "self.addEventListener('install', function(e) {",
+    "  self.skipWaiting();",
+    "});",
+    "self.addEventListener('activate', function(e) {",
+    "  e.waitUntil(clients.claim());",
+    "});",
+    "self.addEventListener('fetch', function(e) {",
+    "  e.respondWith(",
+    "    fetch(e.request, {cache: 'no-store'}).catch(function() {",
+    "      return caches.match(e.request);",
+    "    })",
+    "  );",
+    "});"
+  ].join('\n');
+
+  var blob = new Blob([SW_CODE], {type: 'application/javascript'});
+  var swUrl = URL.createObjectURL(blob);
+
+  navigator.serviceWorker.register(swUrl).then(function(reg) {
+    reg.addEventListener('updatefound', function() {
+      var newWorker = reg.installing;
+      newWorker.addEventListener('statechange', function() {
+        if (newWorker.state === 'activated') {
+          window.location.reload();
+        }
+      });
+    });
+    // Check for updates every time page gains focus
+    window.addEventListener('focus', function() {
+      reg.update();
+    });
+    // Also check on visibility change (returning to app)
+    document.addEventListener('visibilitychange', function() {
+      if (document.visibilityState === 'visible') reg.update();
+    });
+  }).catch(function(e) {
+    console.log('SW not supported in this context:', e.message);
+  });
 }
 </script>
 </body>
