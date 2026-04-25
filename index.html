@@ -997,7 +997,8 @@ function renderRecipes(q) {
       html += '<div class="gcat-hdr">' + timeLabel[key] + '</div>';
       for (var i = 0; i < groups[key].length; i++) {
         var r = groups[key][i];
-        var query = encodeURIComponent(r.name + ' recipe');
+        var mainDish = r.name.split(' with ')[0].split(' With ')[0];
+        var query = encodeURIComponent(mainDish + ' recipe');
         html += '<div class="recipe-item" style="cursor:pointer" onclick="window.open(\'https://www.youtube.com/results?search_query=' + query + '\',\'_blank\')">';
         html += '<div class="recipe-name">' + r.name + mealTag(r) + ' <span style="font-size:0.65rem;color:var(--muted);font-weight:400">▶ YouTube</span></div>';
         html += '</div>';
