@@ -61,7 +61,7 @@ body{
 
 .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:12px}
 
-.vibe-row{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px}
+.vibe-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:12px}
 .vchip{
   width:100%;padding:9px 6px;border-radius:20px;
   font-size:0.78rem;font-weight:600;border:1.5px solid var(--border);
@@ -291,7 +291,7 @@ var RECIPES = [
   {name:"Tofu Curry + Chapati", time:"quick",
    note:"Boost with kasuri methi and a splash of cream at the end.",
    ingredients:["Firm tofu","Frozen roti","Onions","Tomatoes","Ginger","Garlic","Kasuri methi","Fresh cream","Garam masala","Oil","Salt"],
-   nutrition:{cal:420,protein:18,carbs:48,fat:16,fiber:5}},
+   nutrition:{cal:420,protein:20,carbs:48,fat:16,fiber:5}},
 
   {name:"Moong / Matki Curry + Rice", time:"prep",
    note:"Soak overnight. Pressure cook, temper with garlic.",
@@ -595,8 +595,9 @@ function setWeekLabel() {
 
 function buildVibeRow() {
   var diets = [
-    {id:'veg', label:'🥦 Veg Only'},
-    {id:'nonveg', label:'🍗 Veg + Non-Veg', soon:true}
+    {id:'veg',    label:'🥦 Veg Only'},
+    {id:'egg',    label:'🥚 Veg + Eggs'},
+    {id:'nonveg', label:'🍗 + Non-Veg', soon:true}
   ];
   var html = '';
   for (var i = 0; i < diets.length; i++) {
@@ -623,6 +624,8 @@ function setSameDay(val) {
 // ─────────────────────────────────────────────
 function generatePlan() {
   var pool = RECIPES.slice();
+  if (vibe === 'veg') pool = pool.filter(function(r){ return !r.egg && !r.nonveg; });
+  if (vibe === 'egg') pool = pool.filter(function(r){ return !r.nonveg; });
   pool = shuffle(pool);
   var used = {};
   plan = [];
@@ -771,6 +774,8 @@ function filterModal(q) { renderModalList(q); }
 function renderModalList(q) {
   var q2 = q.toLowerCase();
   var list = q2 ? RECIPES.filter(function(r){ return r.name.toLowerCase().indexOf(q2) !== -1; }) : RECIPES.slice();
+  if (vibe === 'veg') list = list.filter(function(r){ return !r.egg && !r.nonveg; });
+  if (vibe === 'egg') list = list.filter(function(r){ return !r.nonveg; });
 
   if (modalFilter === 'rice') {
     list = list.filter(function(r) {
@@ -954,22 +959,39 @@ function renderRecipes(q) {
   q = (q || '').toLowerCase();
   var list = q ? RECIPES.filter(function(r){ return r.name.toLowerCase().indexOf(q) !== -1; }) : RECIPES;
   var timeLabel = {quick:'⚡ Quick (under 25 min)', medium:'🕐 Medium (25–40 min)', prep:'💧 Soak ahead', long:'⏳ Weekend cook'};
-  var groups = {quick:[], medium:[], prep:[], long:[]};
-  for (var i = 0; i < list.length; i++) {
-    var t = list[i].time;
-    if (groups[t]) groups[t].push(list[i]);
-  }
-  var html = '';
-  var keys = ['quick','medium','prep','long'];
-  for (var k = 0; k < keys.length; k++) {
-    var key = keys[k];
-    if (!groups[key].length) continue;
-    html += '<div class="gcat-hdr">' + timeLabel[key] + '</div>';
-    for (var i = 0; i < groups[key].length; i++) {
-      var r = groups[key][i];
-      html += '<div class="recipe-item"><div class="recipe-name">' + r.name + '</div><div class="recipe-meta">' + r.note + '</div></div>';
+
+  function buildSection(items, sectionLabel) {
+    var groups = {quick:[], medium:[], prep:[], long:[]};
+    for (var i = 0; i < items.length; i++) {
+      var t = items[i].time;
+      if (groups[t]) groups[t].push(items[i]);
     }
+    var html = '';
+    var keys = ['quick','medium','prep','long'];
+    var hasAny = false;
+    for (var k = 0; k < keys.length; k++) {
+      if (groups[keys[k]].length) { hasAny = true; break; }
+    }
+    if (!hasAny) return '';
+    html += '<div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--muted);padding:14px 0 6px;border-bottom:2px solid var(--border);margin-bottom:8px">' + sectionLabel + '</div>';
+    for (var k = 0; k < keys.length; k++) {
+      var key = keys[k];
+      if (!groups[key].length) continue;
+      html += '<div class="gcat-hdr">' + timeLabel[key] + '</div>';
+      for (var i = 0; i < groups[key].length; i++) {
+        var r = groups[key][i];
+        html += '<div class="recipe-item"><div class="recipe-name">' + r.name + '</div><div class="recipe-meta">' + r.note + '</div></div>';
+      }
+    }
+    return html;
   }
+
+  var vegList    = list.filter(function(r){ return !r.egg && !r.nonveg; });
+  var eggList    = list.filter(function(r){ return r.egg; });
+  var nonvegList = list.filter(function(r){ return r.nonveg; });
+  var html = buildSection(vegList, '🥦 Vegetarian');
+  if (eggList.length)    html += buildSection(eggList,    '🥚 Egg');
+  if (nonvegList.length) html += buildSection(nonvegList, '🍗 Chicken');
   document.getElementById('recipeList').innerHTML = html || '<div class="empty">No recipes found</div>';
 }
 
