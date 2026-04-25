@@ -169,8 +169,7 @@ body{
   padding:11px 13px;border:1px solid var(--border);
   border-radius:11px;margin-bottom:8px;background:var(--card);
 }
-.recipe-name{font-size:0.88rem;font-weight:600;margin-bottom:3px}
-.recipe-meta{font-size:0.7rem;color:var(--muted);line-height:1.4}
+.recipe-name{font-size:0.88rem;font-weight:600}
 
 .tips{
   background:linear-gradient(135deg,#FFF8EE,#FEF2DC);
@@ -998,7 +997,10 @@ function renderRecipes(q) {
       html += '<div class="gcat-hdr">' + timeLabel[key] + '</div>';
       for (var i = 0; i < groups[key].length; i++) {
         var r = groups[key][i];
-        html += '<div class="recipe-item"><div class="recipe-name">' + r.name + mealTag(r) + '</div><div class="recipe-meta">' + r.note + '</div></div>';
+        var query = encodeURIComponent(r.name + ' recipe');
+        html += '<div class="recipe-item" style="cursor:pointer" onclick="window.open(\'https://www.youtube.com/results?search_query=' + query + '\',\'_blank\')">';
+        html += '<div class="recipe-name">' + r.name + mealTag(r) + ' <span style="font-size:0.65rem;color:var(--muted);font-weight:400">▶ YouTube</span></div>';
+        html += '</div>';
       }
     }
     return html;
