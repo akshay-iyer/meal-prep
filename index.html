@@ -24,6 +24,24 @@
   --sb:env(safe-area-inset-bottom,0px);
   --st:env(safe-area-inset-top,0px);
 }
+/* ── TEMP THEME SWITCHER ── */
+#themePicker{
+  position:fixed;bottom:calc(60px + var(--sb));right:12px;z-index:300;
+  display:flex;flex-direction:column;align-items:flex-end;gap:6px;
+}
+#themeToggle{
+  background:var(--deep);color:var(--gold);border:none;border-radius:50%;
+  width:40px;height:40px;font-size:1.1rem;cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,0.35);
+}
+.t-opts{display:none;flex-direction:column;gap:5px;align-items:flex-end}
+.t-opts.on{display:flex}
+.topt{
+  padding:6px 12px;border-radius:20px;font-size:0.72rem;font-weight:700;
+  border:none;cursor:pointer;white-space:nowrap;
+  box-shadow:0 2px 6px rgba(0,0,0,0.2);font-family:inherit;
+}
+.topt.active{outline:2px solid #fff;outline-offset:1px}
 html,body{height:100%;background:var(--cream);overscroll-behavior:none}
 body{
   font-family:'DM Sans',system-ui,sans-serif;
@@ -267,6 +285,12 @@ body{
     </div>
     <div class="modal-list" id="modalList"></div>
   </div>
+</div>
+
+<!-- TEMP THEME PICKER — remove after choosing -->
+<div id="themePicker">
+  <button id="themeToggle" onclick="toggleThemeOpts()">🎨</button>
+  <div class="t-opts" id="themeOpts"></div>
 </div>
 
 <div class="install-hint" id="installHint">
@@ -1054,6 +1078,59 @@ function loadState() {
     var s = localStorage.getItem('rasoi_same');
     if (s !== null) { sameDay = JSON.parse(s); setSameDay(sameDay); }
   } catch(e) {}
+}
+
+// ─────────────────────────────────────────────
+// TEMP THEME SWITCHER
+// ─────────────────────────────────────────────
+var THEMES = [
+  {id:1, label:'1 · Warm Spice',   btn:'#D4651A', text:'#fff',
+   vars:{saffron:'#D4651A',gold:'#C8902A',cream:'#FAF4EC',deep:'#1C0F07',bark:'#3A1E0A',muted:'#957060',card:'#FFFCF7',border:'#E6D0B8'}},
+  {id:2, label:'2 · Indigo Gold',  btn:'#3D3B8E', text:'#fff',
+   vars:{saffron:'#5C5ADD',gold:'#C9A84C',cream:'#F4F3FC',deep:'#1A1840',bark:'#2E2B6A',muted:'#8883BB',card:'#FAFAFE',border:'#D4D2EE'}},
+  {id:3, label:'3 · Forest',       btn:'#2D6A4F', text:'#fff',
+   vars:{saffron:'#2D6A4F',gold:'#52B788',cream:'#F1F6F2',deep:'#1B2E22',bark:'#2D4A35',muted:'#7D9E85',card:'#F8FAF8',border:'#C8DBC9'}},
+  {id:4, label:'4 · Charcoal Amber',btn:'#2B2B2B',text:'#F5A623',
+   vars:{saffron:'#F5A623',gold:'#F7C948',cream:'#F5F5F5',deep:'#1A1A1A',bark:'#2B2B2B',muted:'#888888',card:'#FAFAFA',border:'#DEDEDE'}},
+  {id:5, label:'5 · Rose Clay',    btn:'#B5451B', text:'#fff',
+   vars:{saffron:'#C1440E',gold:'#E07B54',cream:'#FDF5F0',deep:'#2A1210',bark:'#5C2A1E',muted:'#A0706A',card:'#FEFAF8',border:'#EDD0C8'}},
+];
+var activeTheme = 1;
+
+function applyTheme(t) {
+  var r = document.documentElement.style;
+  r.setProperty('--saffron', t.vars.saffron);
+  r.setProperty('--gold',    t.vars.gold);
+  r.setProperty('--cream',   t.vars.cream);
+  r.setProperty('--deep',    t.vars.deep);
+  r.setProperty('--bark',    t.vars.bark);
+  r.setProperty('--muted',   t.vars.muted);
+  r.setProperty('--card',    t.vars.card);
+  r.setProperty('--border',  t.vars.border);
+  document.body.style.background = t.vars.cream;
+}
+
+function buildThemeOpts() {
+  var html = '';
+  for (var i = 0; i < THEMES.length; i++) {
+    var t = THEMES[i];
+    html += '<button class="topt' + (t.id === activeTheme ? ' active' : '') + '" '
+          + 'style="background:' + t.btn + ';color:' + t.text + '" '
+          + 'onclick="pickTheme(' + t.id + ')">' + t.label + '</button>';
+  }
+  document.getElementById('themeOpts').innerHTML = html;
+}
+
+function pickTheme(id) {
+  activeTheme = id;
+  var t = THEMES.filter(function(x){ return x.id === id; })[0];
+  applyTheme(t);
+  buildThemeOpts();
+}
+
+function toggleThemeOpts() {
+  document.getElementById('themeOpts').classList.toggle('on');
+  buildThemeOpts();
 }
 
 // ─────────────────────────────────────────────
