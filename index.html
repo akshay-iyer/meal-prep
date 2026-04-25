@@ -670,6 +670,12 @@ function shuffle(arr) {
 // ─────────────────────────────────────────────
 // RENDER PLAN
 // ─────────────────────────────────────────────
+function mealTag(r) {
+  if (r.nonveg) return ' 🍗';
+  if (r.egg)    return ' 🥚';
+  return '';
+}
+
 function nutrBar(meal) {
   var n = meal.nutrition;
   if (!n) return '';
@@ -710,7 +716,7 @@ function renderPlan() {
     // LUNCH
     html += '<div class="meal-cell">';
     html += '<div class="meal-label">Lunch</div>';
-    html += '<div class="meal-name">' + d.lunch.name + '</div>';
+    html += '<div class="meal-name">' + d.lunch.name + mealTag(d.lunch) + '</div>';
     html += tbadge(d.lunch.time);
     html += nutrBar(d.lunch);
     if (same) {
@@ -724,11 +730,11 @@ function renderPlan() {
     html += '<div class="meal-cell">';
     html += '<div class="meal-label">Dinner</div>';
     if (same) {
-      html += '<div class="meal-name">' + d.dinner.name + '</div>';
+      html += '<div class="meal-name">' + d.dinner.name + mealTag(d.dinner) + '</div>';
       html += tbadge(d.dinner.time);
       html += nutrBar(d.dinner);
     } else {
-      html += '<div class="meal-name">' + d.dinner.name + '</div>';
+      html += '<div class="meal-name">' + d.dinner.name + mealTag(d.dinner) + '</div>';
       html += tbadge(d.dinner.time);
       html += nutrBar(d.dinner);
       html += '<br><button class="edit-btn" onclick="openEdit(' + i + ',\'dinner\')">change</button>';
@@ -811,7 +817,7 @@ function renderModalList(q) {
     // escape single quotes in name for onclick
     var safeName = r.name.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
     html += '<div class="meal-option' + sel + '" onclick="selectMeal(\'' + safeName + '\')">';
-    html += '<div class="opt-name">' + r.name + '</div>';
+    html += '<div class="opt-name">' + r.name + mealTag(r) + '</div>';
     html += '<div class="opt-meta">' + tbadge(r.time) + ' ' + r.note + '</div>';
     html += '</div>';
   }
@@ -987,7 +993,7 @@ function renderRecipes(q) {
       html += '<div class="gcat-hdr">' + timeLabel[key] + '</div>';
       for (var i = 0; i < groups[key].length; i++) {
         var r = groups[key][i];
-        html += '<div class="recipe-item"><div class="recipe-name">' + r.name + '</div><div class="recipe-meta">' + r.note + '</div></div>';
+        html += '<div class="recipe-item"><div class="recipe-name">' + r.name + mealTag(r) + '</div><div class="recipe-meta">' + r.note + '</div></div>';
       }
     }
     return html;
