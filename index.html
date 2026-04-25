@@ -120,6 +120,7 @@ body{
   background:var(--card);border-radius:20px 20px 0 0;
   width:100%;max-width:430px;max-height:88vh;
   display:flex;flex-direction:column;
+  transition:margin-bottom 0.2s ease;
 }
 .modal-hdr{
   display:flex;align-items:center;justify-content:space-between;
@@ -780,6 +781,7 @@ function setModalFilter(f) {
 
 function closeModal() {
   document.getElementById('editModal').classList.remove('on');
+  document.querySelector('.modal').style.marginBottom = '';
   editTarget = null;
 }
 
@@ -1052,6 +1054,20 @@ function loadState() {
     var s = localStorage.getItem('rasoi_same');
     if (s !== null) { sameDay = JSON.parse(s); setSameDay(sameDay); }
   } catch(e) {}
+}
+
+// ─────────────────────────────────────────────
+// iOS KEYBOARD — lift modal above keyboard
+// ─────────────────────────────────────────────
+if (window.visualViewport) {
+  function onViewportResize() {
+    var modal = document.querySelector('.modal-bg.on .modal');
+    if (!modal) return;
+    var keyboardHeight = window.innerHeight - window.visualViewport.height - window.visualViewport.offsetTop;
+    modal.style.marginBottom = Math.max(0, keyboardHeight) + 'px';
+  }
+  window.visualViewport.addEventListener('resize', onViewportResize);
+  window.visualViewport.addEventListener('scroll', onViewportResize);
 }
 </script>
 <script>
