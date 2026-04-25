@@ -623,14 +623,25 @@ function generatePlan() {
   if (vibe === 'veg') pool = pool.filter(function(r){ return !r.egg && !r.nonveg; });
   if (vibe === 'egg') pool = pool.filter(function(r){ return !r.nonveg; });
   pool = shuffle(pool);
+
+  // Build a special sub-pool and guarantee 3 days get one of those meals
+  var specialPool = [];
+  if (vibe === 'egg')    specialPool = shuffle(pool.filter(function(r){ return r.egg; }));
+  if (vibe === 'nonveg') specialPool = shuffle(pool.filter(function(r){ return r.nonveg; }));
+
+  var specialDays = {};
+  if (specialPool.length) {
+    var dayOrder = shuffle([0,1,2,3,4,5,6]);
+    var guarantee = 2;
+    for (var s = 0; s < guarantee; s++) specialDays[dayOrder[s]] = true;
+  }
+
   var used = {};
   plan = [];
 
   for (var i = 0; i < 7; i++) {
-    var isWeekend = i >= 5;
-    var dayPool = pool;
-    var lunch = pickFrom(dayPool, used);
-    var dinner = sameDay ? lunch : pickFrom(dayPool, used);
+    var lunch = specialDays[i] ? pickFrom(specialPool, used) : pickFrom(pool, used);
+    var dinner = sameDay ? lunch : pickFrom(pool, used);
     plan.push({ day: DAYS[i], lunch: lunch, dinner: dinner });
   }
 
