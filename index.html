@@ -61,7 +61,7 @@ body{
 
 .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:12px}
 
-.vibe-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:12px}
+.vibe-row{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px}
 .vchip{
   width:100%;padding:9px 6px;border-radius:20px;
   font-size:0.78rem;font-weight:600;border:1.5px solid var(--border);
@@ -127,7 +127,15 @@ body{
 }
 .modal-title{font-family:'Lora',serif;font-size:1.05rem}
 .modal-close{font-size:1.4rem;color:var(--muted);cursor:pointer;background:none;border:none;line-height:1}
-.modal-search-wrap{padding:10px 16px;flex-shrink:0}
+.modal-search-wrap{padding:10px 16px 6px;flex-shrink:0}
+.modal-filter-wrap{padding:0 16px 10px;display:flex;gap:6px;flex-wrap:wrap;flex-shrink:0}
+.fchip{
+  padding:6px 12px;border-radius:20px;
+  font-size:0.72rem;font-weight:600;border:1.5px solid var(--border);
+  background:var(--card);color:var(--bark);cursor:pointer;
+  font-family:inherit;transition:all 0.15s;
+}
+.fchip.on{background:var(--saffron);border-color:var(--saffron);color:#fff}
 .modal-list{overflow-y:auto;padding:0 16px calc(16px + var(--sb));flex:1}
 .meal-option{
   padding:11px 13px;border:1.5px solid var(--border);
@@ -250,6 +258,12 @@ body{
     </div>
     <div class="modal-search-wrap">
       <input class="search" style="margin-bottom:0" placeholder="Filter…" oninput="filterModal(this.value)" id="modalSearch">
+    </div>
+    <div class="modal-filter-wrap">
+      <button class="fchip" id="fchip-rice" onclick="setModalFilter('rice')">🍚 Rice-based</button>
+      <button class="fchip" id="fchip-roti" onclick="setModalFilter('roti')">🫓 Roti-based</button>
+      <button class="fchip" id="fchip-quick" onclick="setModalFilter('quick')">⚡ Quick Meal</button>
+      <button class="fchip" id="fchip-protein" onclick="setModalFilter('protein')">💪 High-protein</button>
     </div>
     <div class="modal-list" id="modalList"></div>
   </div>
@@ -496,11 +510,12 @@ var PANTRY = {
 // STATE
 // ─────────────────────────────────────────────
 var DAYS = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
-var vibe = "balanced";
+var vibe = "veg";
 var sameDay = false;
 var plan = [];
 var haveItems = new Set();
 var editTarget = null;
+var modalFilter = null;
 
 // ─────────────────────────────────────────────
 // INIT
@@ -527,15 +542,18 @@ function setWeekLabel() {
 }
 
 function buildVibeRow() {
-  var vibes = [
-    {id:'lazy', label:'😴 Lazy'},
-    {id:'balanced', label:'⚖️ Balanced'},
-    {id:'adventurous', label:'🔥 Adventurous'}
+  var diets = [
+    {id:'veg', label:'🥦 Veg Only'},
+    {id:'nonveg', label:'🍗 Veg + Non-Veg', soon:true}
   ];
   var html = '';
-  for (var i = 0; i < vibes.length; i++) {
-    var v = vibes[i];
-    html += '<button class="vchip' + (v.id === vibe ? ' on' : '') + '" onclick="setVibe(\'' + v.id + '\')">' + v.label + '</button>';
+  for (var i = 0; i < diets.length; i++) {
+    var d = diets[i];
+    if (d.soon) {
+      html += '<button class="vchip" disabled style="opacity:0.4;cursor:default">' + d.label + '<br><span style="font-size:0.6rem;font-weight:400;letter-spacing:0">coming soon</span></button>';
+    } else {
+      html += '<button class="vchip' + (d.id === vibe ? ' on' : '') + '" onclick="setVibe(\'' + d.id + '\')">' + d.label + '</button>';
+    }
   }
   document.getElementById('vibeRow').innerHTML = html;
 }
@@ -553,9 +571,6 @@ function setSameDay(val) {
 // ─────────────────────────────────────────────
 function generatePlan() {
   var pool = RECIPES.slice();
-  if (vibe === 'lazy') pool = pool.filter(function(r){ return r.time === 'quick'; });
-  if (vibe === 'balanced') pool = pool.filter(function(r){ return r.time !== 'long'; });
-
   pool = shuffle(pool);
   var used = {};
   plan = [];
@@ -672,8 +687,22 @@ function openEdit(dayIdx, slot) {
   var label = slot === 'both' ? plan[dayIdx].day : plan[dayIdx].day + ' ' + slot;
   document.getElementById('editTitle').textContent = 'Change — ' + label;
   document.getElementById('modalSearch').value = '';
+  modalFilter = null;
+  var chips = document.querySelectorAll('.fchip');
+  for (var i = 0; i < chips.length; i++) chips[i].classList.remove('on');
   renderModalList('');
   document.getElementById('editModal').classList.add('on');
+}
+
+function setModalFilter(f) {
+  modalFilter = (modalFilter === f) ? null : f;
+  var chips = document.querySelectorAll('.fchip');
+  for (var i = 0; i < chips.length; i++) chips[i].classList.remove('on');
+  if (modalFilter) {
+    var el = document.getElementById('fchip-' + f);
+    if (el) el.classList.add('on');
+  }
+  renderModalList(document.getElementById('modalSearch').value);
 }
 
 function closeModal() {
@@ -689,7 +718,27 @@ function filterModal(q) { renderModalList(q); }
 
 function renderModalList(q) {
   var q2 = q.toLowerCase();
-  var list = q2 ? RECIPES.filter(function(r){ return r.name.toLowerCase().indexOf(q2) !== -1; }) : RECIPES;
+  var list = q2 ? RECIPES.filter(function(r){ return r.name.toLowerCase().indexOf(q2) !== -1; }) : RECIPES.slice();
+
+  if (modalFilter === 'rice') {
+    list = list.filter(function(r) {
+      var n = r.name.toLowerCase();
+      return n.indexOf('rice') !== -1 || n.indexOf('pulao') !== -1 || n.indexOf('biryani') !== -1 ||
+             n.indexOf('chawal') !== -1 || n.indexOf('khichdi') !== -1 ||
+             (r.ingredients && r.ingredients.some(function(ing){ return ing.toLowerCase().indexOf('rice') !== -1; }));
+    });
+  } else if (modalFilter === 'roti') {
+    list = list.filter(function(r) {
+      var n = r.name.toLowerCase();
+      return n.indexOf('roti') !== -1 || n.indexOf('chapati') !== -1 || n.indexOf('paratha') !== -1 ||
+             (r.ingredients && r.ingredients.some(function(ing){ return ing.toLowerCase().indexOf('roti') !== -1; }));
+    });
+  } else if (modalFilter === 'quick') {
+    list = list.filter(function(r){ return r.time === 'quick'; });
+  } else if (modalFilter === 'protein') {
+    list = list.filter(function(r){ return r.nutrition && r.nutrition.protein >= 20; });
+  }
+
   var cur = editTarget ? plan[editTarget.dayIdx].lunch.name : '';
   var html = '';
   for (var i = 0; i < list.length; i++) {
