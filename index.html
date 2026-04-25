@@ -1086,20 +1086,20 @@ function loadState() {
 // TEMP THEME SWITCHER
 // ─────────────────────────────────────────────
 var THEMES = [
-  {id:1, label:'1 · Warm Spice',    btn:'#D4651A', text:'#fff',
-   vars:{saffron:'#D4651A',gold:'#C8902A',cream:'#FAF4EC',deep:'#1C0F07',bark:'#3A1E0A',muted:'#957060',card:'#FFFCF7',border:'#E6D0B8'}},
-  {id:2, label:'2 · Deep Ocean',    btn:'#0A1628', text:'#E8A025',
-   vars:{saffron:'#E8A025',gold:'#F0BB50',cream:'#F2F7FD',deep:'#0A1628',bark:'#1B3A5C',muted:'#7096BB',card:'#FFFFFF',border:'#C8DDF0'}},
-  {id:3, label:'3 · Purple Dusk',   btn:'#1A0A2E', text:'#C8A020',
-   vars:{saffron:'#C8A020',gold:'#E8C040',cream:'#F8F4FF',deep:'#1A0A2E',bark:'#2E1060',muted:'#9878C0',card:'#FFFFFF',border:'#DDD0F0'}},
-  {id:4, label:'4 · Olive & Amber', btn:'#2E3A10', text:'#C8820A',
-   vars:{saffron:'#C8820A',gold:'#E0A030',cream:'#F6F8F0',deep:'#1A1E0A',bark:'#2E3A10',muted:'#8A9860',card:'#FFFFFF',border:'#D8E0C0'}},
-  {id:5, label:'5 · Slate & Coral', btn:'#1E2837', text:'#E8533A',
-   vars:{saffron:'#E8533A',gold:'#F07858',cream:'#F5F7FA',deep:'#1E2837',bark:'#2E3D52',muted:'#8090A8',card:'#FFFFFF',border:'#D0D8E8'}},
-  {id:6, label:'6 · Black & Gold',  btn:'#000000', text:'#FCA311',
-   vars:{saffron:'#FCA311',gold:'#FCA311',cream:'#F5F5F5',deep:'#000000',bark:'#14213D',muted:'#8896B3',card:'#FFFFFF',border:'#E5E5E5'}},
+  {id:1, label:'1 · Black & Gold',      btn:'#000000', text:'#D4A017',
+   vars:{saffron:'#D4A017',gold:'#E8BC30',cream:'#F8F7F2',deep:'#000000',bark:'#1A1A1A',muted:'#909090',card:'#FFFFFF',border:'#E4E0D8'}},
+  {id:2, label:'2 · Black & Antique',   btn:'#1F1A0A', text:'#D4AF37',
+   vars:{saffron:'#B8960C',gold:'#D4AF37',cream:'#F8F5EC',deep:'#000000',bark:'#1F1A0A',muted:'#9A8848',card:'#FFFEF8',border:'#E0D8B0'}},
+  {id:3, label:'3 · Black & Champagne', btn:'#222018', text:'#DFC06A',
+   vars:{saffron:'#C9A84C',gold:'#DFC06A',cream:'#FAF8F2',deep:'#0D0D0D',bark:'#222018',muted:'#9A9280',card:'#FFFFFF',border:'#EAE4D4'}},
+  {id:4, label:'4 · Charcoal & Gold',   btn:'#2C2C2C', text:'#D4A017',
+   vars:{saffron:'#D4A017',gold:'#E8BC30',cream:'#F5F4F0',deep:'#1A1A1A',bark:'#2C2C2C',muted:'#888480',card:'#FFFFFF',border:'#E0DDD4'}},
+  {id:5, label:'5 · Ink & Gold',        btn:'#12100A', text:'#C8A020',
+   vars:{saffron:'#C8A020',gold:'#E0B828',cream:'#FAF8F0',deep:'#0A0800',bark:'#1E180A',muted:'#988858',card:'#FFFEF8',border:'#E8E0C8'}},
+  {id:6, label:'6 · Black & Bright',    btn:'#000000', text:'#F0C000',
+   vars:{saffron:'#F0C000',gold:'#F0C000',cream:'#FAFAF8',deep:'#000000',bark:'#111111',muted:'#888888',card:'#FFFFFF',border:'#E8E6E0'}},
 ];
-var activeTheme = 6;
+var activeTheme = 1;
 
 function applyTheme(t) {
   var r = document.documentElement.style;
