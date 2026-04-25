@@ -629,14 +629,16 @@ function setWeekLabel() {
 
 function buildVibeRow() {
   var diets = [
-    {id:'veg',    label:'🥦 Veg Only'},
-    {id:'egg',    label:'🥚 Veg + Eggs'},
-    {id:'nonveg', label:'🍗 Veg + Non-Veg'}
+    {id:'veg',    icon:'🥦', label:'Vegetarian'},
+    {id:'egg',    icon:'🥚', label:'Eggetarian'},
+    {id:'nonveg', icon:'🍗', label:'Non-Vegetarian'}
   ];
   var html = '';
   for (var i = 0; i < diets.length; i++) {
     var d = diets[i];
-    html += '<button class="vchip' + (d.id === vibe ? ' on' : '') + '" onclick="setVibe(\'' + d.id + '\')">' + d.label + '</button>';
+    html += '<button class="vchip' + (d.id === vibe ? ' on' : '') + '" onclick="setVibe(\'' + d.id + '\')">'
+          + '<span style="display:block;font-size:1.1rem;margin-bottom:2px">' + d.icon + '</span>'
+          + d.label + '</button>';
   }
   document.getElementById('vibeRow').innerHTML = html;
 }
