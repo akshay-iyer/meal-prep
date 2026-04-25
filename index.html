@@ -597,16 +597,12 @@ function buildVibeRow() {
   var diets = [
     {id:'veg',    label:'🥦 Veg Only'},
     {id:'egg',    label:'🥚 Veg + Eggs'},
-    {id:'nonveg', label:'🍗 + Non-Veg', soon:true}
+    {id:'nonveg', label:'🍗 Veg + Non-Veg'}
   ];
   var html = '';
   for (var i = 0; i < diets.length; i++) {
     var d = diets[i];
-    if (d.soon) {
-      html += '<button class="vchip" disabled style="opacity:0.4;cursor:default">' + d.label + '<br><span style="font-size:0.6rem;font-weight:400;letter-spacing:0">coming soon</span></button>';
-    } else {
-      html += '<button class="vchip' + (d.id === vibe ? ' on' : '') + '" onclick="setVibe(\'' + d.id + '\')">' + d.label + '</button>';
-    }
+    html += '<button class="vchip' + (d.id === vibe ? ' on' : '') + '" onclick="setVibe(\'' + d.id + '\')">' + d.label + '</button>';
   }
   document.getElementById('vibeRow').innerHTML = html;
 }
