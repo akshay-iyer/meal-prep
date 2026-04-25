@@ -245,7 +245,7 @@ body{
 
 <!-- RECIPES -->
 <div class="pane" id="pane-recipes">
-  <input class="search" placeholder="Search recipes…" oninput="filterRecipes(this.value)">
+  <input class="search" placeholder="Search recipes…" oninput="renderRecipes(this.value)">
   <div id="recipeList"></div>
 </div>
 
@@ -257,7 +257,7 @@ body{
       <button class="modal-close" onclick="closeModal()">✕</button>
     </div>
     <div class="modal-search-wrap">
-      <input class="search" style="margin-bottom:0" placeholder="Filter…" oninput="filterModal(this.value)" id="modalSearch">
+      <input class="search" style="margin-bottom:0" placeholder="Filter…" oninput="renderModalList(this.value)" id="modalSearch">
     </div>
     <div class="modal-filter-wrap">
       <button class="fchip" id="fchip-rice" onclick="setModalFilter('rice')">🍚 Rice-based</button>
@@ -622,29 +622,38 @@ function setSameDay(val) {
 // GENERATE
 // ─────────────────────────────────────────────
 function generatePlan() {
-  var pool = RECIPES.slice();
-  if (vibe === 'veg') pool = pool.filter(function(r){ return !r.egg && !r.nonveg; });
-  if (vibe === 'egg') pool = pool.filter(function(r){ return !r.nonveg; });
-  pool = shuffle(pool);
-
-  // Build a special sub-pool and guarantee 3 days get one of those meals
+  var all = RECIPES.slice();
   var specialPool = [];
-  if (vibe === 'egg')    specialPool = shuffle(pool.filter(function(r){ return r.egg; }));
-  if (vibe === 'nonveg') specialPool = shuffle(pool.filter(function(r){ return r.nonveg; }));
+  var basePool;
 
+  if (vibe === 'veg') {
+    basePool = all.filter(function(r){ return !r.egg && !r.nonveg; });
+  } else if (vibe === 'egg') {
+    basePool    = all.filter(function(r){ return !r.egg && !r.nonveg; });
+    specialPool = all.filter(function(r){ return r.egg; });
+  } else {
+    basePool    = all.filter(function(r){ return !r.nonveg; });
+    specialPool = all.filter(function(r){ return r.nonveg; });
+  }
+  basePool    = shuffle(basePool);
+  specialPool = shuffle(specialPool);
+
+  var LIMIT = 2;
+
+  // Pick exactly LIMIT days for special meals, rest get base-only
   var specialDays = {};
   if (specialPool.length) {
     var dayOrder = shuffle([0,1,2,3,4,5,6]);
-    var guarantee = 2;
-    for (var s = 0; s < guarantee; s++) specialDays[dayOrder[s]] = true;
+    for (var s = 0; s < Math.min(LIMIT, specialPool.length); s++) specialDays[dayOrder[s]] = true;
   }
 
-  var used = {};
+  var usedSpecial = {};
+  var usedBase = {};
   plan = [];
 
   for (var i = 0; i < 7; i++) {
-    var lunch = specialDays[i] ? pickFrom(specialPool, used) : pickFrom(pool, used);
-    var dinner = sameDay ? lunch : pickFrom(pool, used);
+    var lunch = specialDays[i] ? pickFrom(specialPool, usedSpecial) : pickFrom(basePool, usedBase);
+    var dinner = sameDay ? lunch : pickFrom(basePool, usedBase);
     plan.push({ day: DAYS[i], lunch: lunch, dinner: dinner });
   }
 
@@ -732,16 +741,10 @@ function renderPlan() {
     // DINNER
     html += '<div class="meal-cell">';
     html += '<div class="meal-label">Dinner</div>';
-    if (same) {
-      html += '<div class="meal-name">' + d.dinner.name + mealTag(d.dinner) + '</div>';
-      html += tbadge(d.dinner.time);
-      html += nutrBar(d.dinner);
-    } else {
-      html += '<div class="meal-name">' + d.dinner.name + mealTag(d.dinner) + '</div>';
-      html += tbadge(d.dinner.time);
-      html += nutrBar(d.dinner);
-      html += '<br><button class="edit-btn" onclick="openEdit(' + i + ',\'dinner\')">change</button>';
-    }
+    html += '<div class="meal-name">' + d.dinner.name + mealTag(d.dinner) + '</div>';
+    html += tbadge(d.dinner.time);
+    html += nutrBar(d.dinner);
+    if (!same) html += '<br><button class="edit-btn" onclick="openEdit(' + i + ',\'dinner\')">change</button>';
     html += '</div>';
 
     html += '</div></div>';
@@ -785,7 +788,6 @@ function bgClose(e) {
   if (e.target === document.getElementById('editModal')) closeModal();
 }
 
-function filterModal(q) { renderModalList(q); }
 
 function renderModalList(q) {
   var q2 = q.toLowerCase();
@@ -1011,7 +1013,6 @@ function renderRecipes(q) {
   document.getElementById('recipeList').innerHTML = html || '<div class="empty">No recipes found</div>';
 }
 
-function filterRecipes(q) { renderRecipes(q); }
 
 // ─────────────────────────────────────────────
 // TABS
