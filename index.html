@@ -37,9 +37,10 @@
 .t-opts{display:none;flex-direction:column;gap:5px;align-items:flex-end}
 .t-opts.on{display:flex}
 .topt{
-  padding:6px 12px;border-radius:20px;font-size:0.72rem;font-weight:700;
+  height:32px;padding:0 14px;border-radius:20px;font-size:0.72rem;font-weight:700;
   border:none;cursor:pointer;white-space:nowrap;
   box-shadow:0 2px 6px rgba(0,0,0,0.2);font-family:inherit;
+  display:flex;align-items:center;
 }
 .topt.active{outline:2px solid #fff;outline-offset:1px}
 html,body{height:100%;background:var(--cream);overscroll-behavior:none}
@@ -600,6 +601,7 @@ var modalFilter = null;
 // INIT
 // ─────────────────────────────────────────────
 window.onload = function() {
+  pickTheme(activeTheme);
   setWeekLabel();
   buildVibeRow();
   loadState();
@@ -1084,18 +1086,20 @@ function loadState() {
 // TEMP THEME SWITCHER
 // ─────────────────────────────────────────────
 var THEMES = [
-  {id:1, label:'1 · Warm Spice',   btn:'#D4651A', text:'#fff',
+  {id:1, label:'1 · Warm Spice',    btn:'#D4651A', text:'#fff',
    vars:{saffron:'#D4651A',gold:'#C8902A',cream:'#FAF4EC',deep:'#1C0F07',bark:'#3A1E0A',muted:'#957060',card:'#FFFCF7',border:'#E6D0B8'}},
-  {id:2, label:'2 · Indigo Gold',  btn:'#3D3B8E', text:'#fff',
-   vars:{saffron:'#5C5ADD',gold:'#C9A84C',cream:'#F4F3FC',deep:'#1A1840',bark:'#2E2B6A',muted:'#8883BB',card:'#FAFAFE',border:'#D4D2EE'}},
-  {id:3, label:'3 · Forest',       btn:'#2D6A4F', text:'#fff',
-   vars:{saffron:'#2D6A4F',gold:'#52B788',cream:'#F1F6F2',deep:'#1B2E22',bark:'#2D4A35',muted:'#7D9E85',card:'#F8FAF8',border:'#C8DBC9'}},
-  {id:4, label:'4 · Charcoal Amber',btn:'#2B2B2B',text:'#F5A623',
-   vars:{saffron:'#F5A623',gold:'#F7C948',cream:'#F5F5F5',deep:'#1A1A1A',bark:'#2B2B2B',muted:'#888888',card:'#FAFAFA',border:'#DEDEDE'}},
-  {id:5, label:'5 · Rose Clay',    btn:'#B5451B', text:'#fff',
-   vars:{saffron:'#C1440E',gold:'#E07B54',cream:'#FDF5F0',deep:'#2A1210',bark:'#5C2A1E',muted:'#A0706A',card:'#FEFAF8',border:'#EDD0C8'}},
+  {id:2, label:'2 · Deep Ocean',    btn:'#0A1628', text:'#E8A025',
+   vars:{saffron:'#E8A025',gold:'#F0BB50',cream:'#F2F7FD',deep:'#0A1628',bark:'#1B3A5C',muted:'#7096BB',card:'#FFFFFF',border:'#C8DDF0'}},
+  {id:3, label:'3 · Purple Dusk',   btn:'#1A0A2E', text:'#C8A020',
+   vars:{saffron:'#C8A020',gold:'#E8C040',cream:'#F8F4FF',deep:'#1A0A2E',bark:'#2E1060',muted:'#9878C0',card:'#FFFFFF',border:'#DDD0F0'}},
+  {id:4, label:'4 · Olive & Amber', btn:'#2E3A10', text:'#C8820A',
+   vars:{saffron:'#C8820A',gold:'#E0A030',cream:'#F6F8F0',deep:'#1A1E0A',bark:'#2E3A10',muted:'#8A9860',card:'#FFFFFF',border:'#D8E0C0'}},
+  {id:5, label:'5 · Slate & Coral', btn:'#1E2837', text:'#E8533A',
+   vars:{saffron:'#E8533A',gold:'#F07858',cream:'#F5F7FA',deep:'#1E2837',bark:'#2E3D52',muted:'#8090A8',card:'#FFFFFF',border:'#D0D8E8'}},
+  {id:6, label:'6 · Black & Gold',  btn:'#000000', text:'#FCA311',
+   vars:{saffron:'#FCA311',gold:'#FCA311',cream:'#F5F5F5',deep:'#000000',bark:'#14213D',muted:'#8896B3',card:'#FFFFFF',border:'#E5E5E5'}},
 ];
-var activeTheme = 1;
+var activeTheme = 6;
 
 function applyTheme(t) {
   var r = document.documentElement.style;
