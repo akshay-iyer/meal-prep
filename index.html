@@ -94,6 +94,10 @@ body{
 .meal-label{font-size:0.6rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);font-weight:600;margin-bottom:3px}
 .meal-name{font-size:0.82rem;font-weight:600;line-height:1.3;margin-bottom:5px}
 .meal-same{font-size:0.82rem;color:var(--muted);font-style:italic;margin-bottom:5px}
+.macro-bar{font-size:0.68rem;color:var(--muted);margin-top:5px;line-height:1.5}
+.macro-bar span{color:var(--bark);font-weight:600}
+.macro-detail{font-size:0.63rem;color:var(--muted);margin-top:1px}
+.macro-detail span{color:var(--bark)}
 .badge{font-size:0.6rem;padding:2px 6px;border-radius:8px;font-weight:600;display:inline-block;margin-right:3px}
 .b-quick{background:#DCEDC8;color:#2E6B1A}
 .b-medium{background:#FFF3E0;color:#C65000}
@@ -267,151 +271,187 @@ var RECIPES = [
   // EXISTING
   {name:"Ivy Gourd Curry + Chapati", time:"quick",
    note:"Use frozen cut tindora. Quick tadka with mustard + hing.",
-   ingredients:["Frozen ivy gourd (tindora)","Frozen roti","Mustard seeds","Hing","Turmeric","Red chili powder","Coriander powder","Oil","Salt"]},
+   ingredients:["Frozen ivy gourd (tindora)","Frozen roti","Mustard seeds","Hing","Turmeric","Red chili powder","Coriander powder","Oil","Salt"],
+   nutrition:{cal:380,protein:9,carbs:52,fat:12,fiber:6}},
 
   {name:"Tofu Curry + Chapati", time:"quick",
    note:"Boost with kasuri methi and a splash of cream at the end.",
-   ingredients:["Firm tofu","Frozen roti","Onions","Tomatoes","Ginger","Garlic","Kasuri methi","Fresh cream","Garam masala","Oil","Salt"]},
+   ingredients:["Firm tofu","Frozen roti","Onions","Tomatoes","Ginger","Garlic","Kasuri methi","Fresh cream","Garam masala","Oil","Salt"],
+   nutrition:{cal:420,protein:18,carbs:48,fat:16,fiber:5}},
 
   {name:"Moong / Matki Curry + Rice", time:"prep",
    note:"Soak overnight. Pressure cook, temper with garlic.",
-   ingredients:["Whole moong or moth beans","Basmati rice","Onions","Tomatoes","Ginger","Garlic","Cumin seeds","Turmeric","Coriander powder","Garam masala","Oil","Salt"]},
+   ingredients:["Whole moong or moth beans","Basmati rice","Onions","Tomatoes","Ginger","Garlic","Cumin seeds","Turmeric","Coriander powder","Garam masala","Oil","Salt"],
+   nutrition:{cal:460,protein:22,carbs:70,fat:8,fiber:10}},
 
   {name:"Dal + Rice + Capsicum Sabzi", time:"medium",
    note:"Toor dal pressure cooked. Capsicum dry sabzi on the side.",
-   ingredients:["Toor dal","Basmati rice","Capsicum","Onions","Tomatoes","Cumin seeds","Turmeric","Red chili powder","Ghee","Oil","Salt"]},
+   ingredients:["Toor dal","Basmati rice","Capsicum","Onions","Tomatoes","Cumin seeds","Turmeric","Red chili powder","Ghee","Oil","Salt"],
+   nutrition:{cal:490,protein:18,carbs:74,fat:11,fiber:9}},
 
   {name:"Chole + Rice", time:"prep",
    note:"Soak chickpeas overnight. Pressure cook 6 whistles.",
-   ingredients:["Dried chickpeas","Basmati rice","Onions","Tomatoes","Ginger","Garlic","Chole masala","Cumin seeds","Bay leaf","Amchur","Oil","Salt"]},
+   ingredients:["Dried chickpeas","Basmati rice","Onions","Tomatoes","Ginger","Garlic","Chole masala","Cumin seeds","Bay leaf","Amchur","Oil","Salt"],
+   nutrition:{cal:520,protein:20,carbs:78,fat:10,fiber:14}},
 
   {name:"Rajma Chawal", time:"prep",
    note:"Soak overnight. Pressure cook 8 whistles. Classic gravy.",
-   ingredients:["Kidney beans","Basmati rice","Onions","Tomatoes","Ginger","Garlic","Cumin seeds","Coriander powder","Garam masala","Kasuri methi","Ghee","Salt"]},
+   ingredients:["Kidney beans","Basmati rice","Onions","Tomatoes","Ginger","Garlic","Cumin seeds","Coriander powder","Garam masala","Kasuri methi","Ghee","Salt"],
+   nutrition:{cal:540,protein:22,carbs:80,fat:10,fiber:16}},
 
   {name:"Paneer Curry + Chapati", time:"quick",
    note:"Use frozen cubed paneer. Quick makhani-style sauce.",
-   ingredients:["Frozen paneer cubed","Frozen roti","Onions","Tomatoes","Ginger","Garlic","Fresh cream","Kasuri methi","Garam masala","Butter","Salt"]},
+   ingredients:["Frozen paneer cubed","Frozen roti","Onions","Tomatoes","Ginger","Garlic","Fresh cream","Kasuri methi","Garam masala","Butter","Salt"],
+   nutrition:{cal:480,protein:22,carbs:44,fat:22,fiber:4}},
 
   {name:"Cabbage Sabzi + Dal + Rice", time:"medium",
    note:"Shred and cook cabbage with mustard + curry leaves. Simple dal.",
-   ingredients:["Cabbage","Toor dal","Basmati rice","Mustard seeds","Curry leaves","Green chilies","Turmeric","Oil","Salt"]},
+   ingredients:["Cabbage","Toor dal","Basmati rice","Mustard seeds","Curry leaves","Green chilies","Turmeric","Oil","Salt"],
+   nutrition:{cal:440,protein:16,carbs:68,fat:9,fiber:10}},
 
   {name:"Gobi Sabzi + Chapati", time:"medium",
    note:"Dry roast whole spices first. Add potato for aloo gobi.",
-   ingredients:["Cauliflower","Frozen roti","Onions","Tomatoes","Cumin seeds","Turmeric","Coriander powder","Amchur","Oil","Salt"]},
+   ingredients:["Cauliflower","Frozen roti","Onions","Tomatoes","Cumin seeds","Turmeric","Coriander powder","Amchur","Oil","Salt"],
+   nutrition:{cal:380,protein:10,carbs:52,fat:13,fiber:7}},
 
   {name:"Thai Green Curry + Rice", time:"medium",
    note:"Store-bought paste. Coconut milk + whatever veg you have.",
-   ingredients:["Thai green curry paste","Coconut milk (canned)","Basmati rice","Firm tofu","Capsicum","Oil","Salt"]},
+   ingredients:["Thai green curry paste","Coconut milk (canned)","Basmati rice","Firm tofu","Capsicum","Oil","Salt"],
+   nutrition:{cal:460,protein:14,carbs:58,fat:18,fiber:5}},
 
   {name:"Tamil Kootu + Rice", time:"medium",
    note:"Needs cucumber and fresh coconut. Chana dal base.",
-   ingredients:["Cucumber","Fresh coconut grated","Chana dal","Basmati rice","Mustard seeds","Curry leaves","Cumin","Turmeric","Red chilies","Oil","Salt"]},
+   ingredients:["Cucumber","Fresh coconut grated","Chana dal","Basmati rice","Mustard seeds","Curry leaves","Cumin","Turmeric","Red chilies","Oil","Salt"],
+   nutrition:{cal:420,protein:12,carbs:64,fat:11,fiber:8}},
 
   // NEW — QUICK
   {name:"Jeera Rice + Tadka Dal", time:"quick",
    note:"Toast cumin in ghee until it pops. Masoor dal, 20 mins flat.",
-   ingredients:["Masoor dal","Basmati rice","Cumin seeds","Ghee","Onions","Tomatoes","Turmeric","Red chili powder","Garlic","Salt"]},
+   ingredients:["Masoor dal","Basmati rice","Cumin seeds","Ghee","Onions","Tomatoes","Turmeric","Red chili powder","Garlic","Salt"],
+   nutrition:{cal:450,protein:16,carbs:70,fat:10,fiber:8}},
 
   {name:"Aloo Tamatar Sabzi + Chapati", time:"quick",
    note:"Potatoes always stocked. Mash a few pieces into the gravy.",
-   ingredients:["Potatoes","Tomatoes","Frozen roti","Cumin seeds","Ginger","Green chilies","Turmeric","Coriander powder","Oil","Salt"]},
+   ingredients:["Potatoes","Tomatoes","Frozen roti","Cumin seeds","Ginger","Green chilies","Turmeric","Coriander powder","Oil","Salt"],
+   nutrition:{cal:390,protein:8,carbs:60,fat:12,fiber:6}},
 
   {name:"Peas Pulao + Raita", time:"quick",
    note:"Whole spices: cardamom, cloves, bay leaf. Fried onions on top.",
-   ingredients:["Frozen green peas","Basmati rice","Full-fat yogurt","Cardamom","Cloves","Bay leaf","Onions","Ghee","Cumin seeds","Salt"]},
+   ingredients:["Frozen green peas","Basmati rice","Full-fat yogurt","Cardamom","Cloves","Bay leaf","Onions","Ghee","Cumin seeds","Salt"],
+   nutrition:{cal:430,protein:12,carbs:68,fat:10,fiber:7}},
 
   {name:"Rasam + Rice + Papad", time:"quick",
    note:"Keep rasam powder and tamarind paste stocked. 15 mins.",
-   ingredients:["Rasam powder","Tamarind paste","Basmati rice","Papad","Tomatoes","Mustard seeds","Curry leaves","Ghee","Salt"]},
+   ingredients:["Rasam powder","Tamarind paste","Basmati rice","Papad","Tomatoes","Mustard seeds","Curry leaves","Ghee","Salt"],
+   nutrition:{cal:350,protein:8,carbs:62,fat:7,fiber:4}},
 
   {name:"Khichdi + Ghee + Papad", time:"quick",
    note:"Moong dal + rice together. Heavy on the ghee. Pure comfort.",
-   ingredients:["Moong dal split","Basmati rice","Ghee","Papad","Cumin seeds","Turmeric","Ginger","Salt"]},
+   ingredients:["Moong dal split","Basmati rice","Ghee","Papad","Cumin seeds","Turmeric","Ginger","Salt"],
+   nutrition:{cal:460,protein:16,carbs:66,fat:14,fiber:8}},
 
   {name:"Curd Rice + Pickle + Papad", time:"quick",
    note:"Temper with mustard + curry leaves poured over cold curd rice.",
-   ingredients:["Basmati rice","Full-fat yogurt","Mixed pickle","Papad","Mustard seeds","Curry leaves","Ghee","Salt"]},
+   ingredients:["Basmati rice","Full-fat yogurt","Mixed pickle","Papad","Mustard seeds","Curry leaves","Ghee","Salt"],
+   nutrition:{cal:380,protein:10,carbs:62,fat:9,fiber:2}},
 
   {name:"Bhindi Masala + Roti", time:"quick",
   note:"Dry stir-fry okra on high heat — don't cover or it gets slimy. Onions + dry spices only.",
-  ingredients:["Okra (bhindi)","Frozen roti","Onions","Tomatoes","Cumin seeds","Turmeric","Red chili powder","Coriander powder","Amchur","Oil","Salt"]},
+  ingredients:["Okra (bhindi)","Frozen roti","Onions","Tomatoes","Cumin seeds","Turmeric","Red chili powder","Coriander powder","Amchur","Oil","Salt"],
+   nutrition:{cal:360,protein:8,carbs:48,fat:14,fiber:8}},
 
   {name:"Lemon Rice + Papad", time:"quick",
   note:"Use leftover rice. Temper mustard + curry leaves + peanuts in oil. Squeeze lemon off heat.",
-  ingredients:["Basmati rice","Lemon","Papad","Peanuts","Mustard seeds","Curry leaves","Green chilies","Turmeric","Chana dal","Oil","Salt"]},
+  ingredients:["Basmati rice","Lemon","Papad","Peanuts","Mustard seeds","Curry leaves","Green chilies","Turmeric","Chana dal","Oil","Salt"],
+   nutrition:{cal:380,protein:8,carbs:64,fat:10,fiber:3}},
 
   {name:"Tomato Rice + Raita", time:"quick",
   note:"South Indian style. Cook tomatoes down until jammy, add cooked rice and temper.",
-  ingredients:["Basmati rice","Tomatoes","Full-fat yogurt","Mustard seeds","Curry leaves","Onions","Green chilies","Turmeric","Red chili powder","Oil","Salt"]},
+  ingredients:["Basmati rice","Tomatoes","Full-fat yogurt","Mustard seeds","Curry leaves","Onions","Green chilies","Turmeric","Red chili powder","Oil","Salt"],
+   nutrition:{cal:390,protein:10,carbs:62,fat:10,fiber:4}},
 
   {name:"Dahi Aloo + Roti", time:"quick",
   note:"No onion-garlic. Boil potatoes, toss in yogurt-spice gravy. Tangy and quick.",
-  ingredients:["Potatoes","Full-fat yogurt","Frozen roti","Cumin seeds","Turmeric","Red chili powder","Coriander powder","Mustard seeds","Oil","Salt"]},
+  ingredients:["Potatoes","Full-fat yogurt","Frozen roti","Cumin seeds","Turmeric","Red chili powder","Coriander powder","Mustard seeds","Oil","Salt"],
+   nutrition:{cal:400,protein:10,carbs:58,fat:13,fiber:5}},
 
   // NEW — MEDIUM
   {name:"Chana Saag + Rice", time:"medium",
   note:"Use canned chickpeas to skip soaking. Fresh spinach wilted in at the end.",
-  ingredients:["Canned chickpeas","Fresh spinach","Basmati rice","Onions","Tomatoes","Ginger","Garlic","Cumin seeds","Coriander powder","Garam masala","Oil","Salt"]},
+  ingredients:["Canned chickpeas","Fresh spinach","Basmati rice","Onions","Tomatoes","Ginger","Garlic","Cumin seeds","Coriander powder","Garam masala","Oil","Salt"],
+   nutrition:{cal:480,protein:18,carbs:68,fat:10,fiber:14}},
   
   {name:"Ennai Kathirikai + Rice", time:"medium",
   note:"Tamil stuffed baby eggplant. Tamarind-sesame-peanut masala stuffed and pan-roasted in oil.",
-  ingredients:["Baby eggplants","Basmati rice","Tamarind paste","Sesame seeds","Peanuts","Onions","Mustard seeds","Curry leaves","Red chilies","Oil","Salt"]},
+  ingredients:["Baby eggplants","Basmati rice","Tamarind paste","Sesame seeds","Peanuts","Onions","Mustard seeds","Curry leaves","Red chilies","Oil","Salt"],
+   nutrition:{cal:480,protein:8,carbs:62,fat:22,fiber:9}},
 
   {name:"Palak Paneer + Chapati", time:"medium",
    note:"Blanch and blend spinach. Batch-freeze the base. Add paneer fresh.",
-   ingredients:["Fresh spinach","Frozen paneer cubed","Frozen roti","Onions","Tomatoes","Ginger","Garlic","Fresh cream","Garam masala","Cumin seeds","Oil","Salt"]},
+   ingredients:["Fresh spinach","Frozen paneer cubed","Frozen roti","Onions","Tomatoes","Ginger","Garlic","Fresh cream","Garam masala","Cumin seeds","Oil","Salt"],
+   nutrition:{cal:490,protein:24,carbs:44,fat:24,fiber:7}},
 
   {name:"Matar Paneer + Rice", time:"medium",
    note:"Frozen peas + frozen paneer. Rich tomato-onion gravy, 25 mins.",
-   ingredients:["Frozen paneer cubed","Frozen green peas","Basmati rice","Onions","Tomatoes","Ginger","Garlic","Kasuri methi","Fresh cream","Cumin seeds","Oil","Salt"]},
+   ingredients:["Frozen paneer cubed","Frozen green peas","Basmati rice","Onions","Tomatoes","Ginger","Garlic","Kasuri methi","Fresh cream","Cumin seeds","Oil","Salt"],
+   nutrition:{cal:510,protein:22,carbs:60,fat:20,fiber:8}},
 
   {name:"Aloo Matar Curry + Roti", time:"medium",
    note:"Pressure cook potatoes and peas together. Classic comfort.",
-   ingredients:["Potatoes","Frozen green peas","Frozen roti","Onions","Tomatoes","Ginger","Garlic","Cumin seeds","Coriander powder","Garam masala","Oil","Salt"]},
+   ingredients:["Potatoes","Frozen green peas","Frozen roti","Onions","Tomatoes","Ginger","Garlic","Cumin seeds","Coriander powder","Garam masala","Oil","Salt"],
+   nutrition:{cal:430,protein:12,carbs:66,fat:12,fiber:8}},
 
   {name:"Kadhi Pakora + Rice", time:"medium",
    note:"Yogurt-besan base. Air fry the pakoras instead of deep frying.",
-   ingredients:["Full-fat yogurt","Besan (chickpea flour)","Basmati rice","Onions","Mustard seeds","Curry leaves","Cumin seeds","Turmeric","Red chili powder","Oil","Salt"]},
+   ingredients:["Full-fat yogurt","Besan (chickpea flour)","Basmati rice","Onions","Mustard seeds","Curry leaves","Cumin seeds","Turmeric","Red chili powder","Oil","Salt"],
+   nutrition:{cal:480,protein:14,carbs:64,fat:18,fiber:4}},
 
   {name:"Dum Aloo + Paratha", time:"medium",
    note:"Air fry baby potatoes first for crisp skin. Yogurt-tomato gravy.",
-   ingredients:["Baby potatoes","Frozen roti","Full-fat yogurt","Tomatoes","Ginger","Garlic","Cumin seeds","Coriander powder","Garam masala","Kasuri methi","Oil","Salt"]},
+   ingredients:["Baby potatoes","Frozen roti","Full-fat yogurt","Tomatoes","Ginger","Garlic","Cumin seeds","Coriander powder","Garam masala","Kasuri methi","Oil","Salt"],
+   nutrition:{cal:500,protein:10,carbs:70,fat:20,fiber:6}},
 
   {name:"Mixed Veg Handi + Rice", time:"medium",
    note:"Dump whatever veg you have. Heavy cream at end = restaurant feel.",
-   ingredients:["Basmati rice","Onions","Tomatoes","Mixed vegetables","Fresh cream","Ginger","Garlic","Kasuri methi","Garam masala","Butter","Salt"]},
+   ingredients:["Basmati rice","Onions","Tomatoes","Mixed vegetables","Fresh cream","Ginger","Garlic","Kasuri methi","Garam masala","Butter","Salt"],
+   nutrition:{cal:460,protein:12,carbs:62,fat:16,fiber:7}},
 
   {name:"Veg Pulao + Boondi Raita", time:"medium",
    note:"One pot. Whole spices + vegetables. Easier than biryani.",
-   ingredients:["Basmati rice","Mixed vegetables","Full-fat yogurt","Boondi","Cardamom","Cloves","Bay leaf","Onions","Ghee","Cumin seeds","Salt"]},
+   ingredients:["Basmati rice","Mixed vegetables","Full-fat yogurt","Boondi","Cardamom","Cloves","Bay leaf","Onions","Ghee","Cumin seeds","Salt"],
+   nutrition:{cal:470,protein:12,carbs:70,fat:14,fiber:6}},
 
   // AIR FRYER / OVEN
   {name:"Air Fryer Paneer Tikka + Dal Rice", time:"medium",
    note:"Marinate paneer in yogurt + tandoori masala. Air fry 12 min 200C.",
-   ingredients:["Frozen paneer cubed","Full-fat yogurt","Tandoori masala","Toor dal","Basmati rice","Capsicum","Onions","Lemon","Oil","Salt"]},
+   ingredients:["Frozen paneer cubed","Full-fat yogurt","Tandoori masala","Toor dal","Basmati rice","Capsicum","Onions","Lemon","Oil","Salt"],
+   nutrition:{cal:520,protein:28,carbs:54,fat:20,fiber:6}},
 
   {name:"Oven Roasted Gobi + Rajma Rice", time:"medium",
    note:"Roast cauliflower at 220C for 25 min. Use canned rajma to save time.",
-   ingredients:["Cauliflower","Canned kidney beans","Basmati rice","Cumin seeds","Coriander powder","Turmeric","Amchur","Oil","Onions","Tomatoes","Salt"]},
+   ingredients:["Cauliflower","Canned kidney beans","Basmati rice","Cumin seeds","Coriander powder","Turmeric","Amchur","Oil","Onions","Tomatoes","Salt"],
+   nutrition:{cal:480,protein:18,carbs:68,fat:12,fiber:12}},
 
   {name:"Air Fryer Aloo Chaat + Tadka Dal", time:"medium",
    note:"Air fry cubed potatoes 15 min. Toss in chaat masala. Dal alongside.",
-   ingredients:["Potatoes","Chaat masala","Masoor dal","Cumin seeds","Ghee","Tamarind paste","Coriander leaves","Amchur","Oil","Salt"]},
+   ingredients:["Potatoes","Chaat masala","Masoor dal","Cumin seeds","Ghee","Tamarind paste","Coriander leaves","Amchur","Oil","Salt"],
+   nutrition:{cal:420,protein:14,carbs:62,fat:11,fiber:8}},
 
   {name:"Stuffed Capsicum + Rice", time:"medium",
    note:"Fill capsicums with spiced paneer + peas. Bake 200C for 25 min.",
-   ingredients:["Capsicum","Frozen paneer cubed","Frozen green peas","Basmati rice","Onions","Tomatoes","Garam masala","Oil","Salt"]},
+   ingredients:["Capsicum","Frozen paneer cubed","Frozen green peas","Basmati rice","Onions","Tomatoes","Garam masala","Oil","Salt"],
+   nutrition:{cal:450,protein:18,carbs:56,fat:16,fiber:7}},
 
   // WEEKEND
   {name:"Pav Bhaji", time:"medium",
    note:"Batch bhaji freezes well. Make a big pot on Sunday.",
-   ingredients:["Potatoes","Frozen green peas","Cauliflower","Onions","Tomatoes","Pav rolls","Butter","Pav bhaji masala","Coriander leaves","Lemon","Salt"]},
+   ingredients:["Potatoes","Frozen green peas","Cauliflower","Onions","Tomatoes","Pav rolls","Butter","Pav bhaji masala","Coriander leaves","Lemon","Salt"],
+   nutrition:{cal:540,protein:14,carbs:74,fat:18,fiber:10}},
 
   {name:"Veg Biryani", time:"long",
    note:"Ranveer Brar dum sealing technique. Worth the weekend effort.",
-   ingredients:["Basmati rice","Mixed vegetables","Full-fat yogurt","Fried onions","Saffron","Cardamom","Cloves","Bay leaf","Ghee","Mint leaves","Coriander leaves","Biryani masala","Salt"]}
+   ingredients:["Basmati rice","Mixed vegetables","Full-fat yogurt","Fried onions","Saffron","Cardamom","Cloves","Bay leaf","Ghee","Mint leaves","Coriander leaves","Biryani masala","Salt"],
+   nutrition:{cal:560,protein:14,carbs:82,fat:16,fiber:8}}
 ];
 
 // ─────────────────────────────────────────────
@@ -538,6 +578,13 @@ function shuffle(arr) {
 // ─────────────────────────────────────────────
 // RENDER PLAN
 // ─────────────────────────────────────────────
+function nutrBar(meal) {
+  var n = meal.nutrition;
+  if (!n) return '';
+  return '<div class="macro-bar"><span>' + n.cal + '</span> cal &nbsp;·&nbsp; <span>' + n.protein + 'g</span> protein</div>' +
+         '<div class="macro-detail"><span>' + n.carbs + 'g</span> carbs &nbsp;·&nbsp; <span>' + n.fat + 'g</span> fat &nbsp;·&nbsp; <span>' + n.fiber + 'g</span> fiber</div>';
+}
+
 function tbadge(t) {
   var map = {quick:'b-quick ⚡ Quick', medium:'b-medium 🕐 Medium', prep:'b-prep 💧 Soak first', long:'b-long ⏳ Long cook'};
   var s = (map[t] || map.medium).split(' ');
@@ -573,8 +620,8 @@ function renderPlan() {
     html += '<div class="meal-label">Lunch</div>';
     html += '<div class="meal-name">' + d.lunch.name + '</div>';
     html += tbadge(d.lunch.time);
+    html += nutrBar(d.lunch);
     if (same) {
-      html += '<br><span class="badge b-same" style="margin-top:4px">cook once</span>';
       html += '<br><button class="edit-btn" onclick="openEdit(' + i + ',\'both\')">change</button>';
     } else {
       html += '<br><button class="edit-btn" onclick="openEdit(' + i + ',\'lunch\')">change</button>';
@@ -585,11 +632,13 @@ function renderPlan() {
     html += '<div class="meal-cell">';
     html += '<div class="meal-label">Dinner</div>';
     if (same) {
-      html += '<div class="meal-same">Same as lunch ↑</div>';
-      html += '<span class="badge b-same">larger qty</span>';
+      html += '<div class="meal-name">' + d.dinner.name + '</div>';
+      html += tbadge(d.dinner.time);
+      html += nutrBar(d.dinner);
     } else {
       html += '<div class="meal-name">' + d.dinner.name + '</div>';
       html += tbadge(d.dinner.time);
+      html += nutrBar(d.dinner);
       html += '<br><button class="edit-btn" onclick="openEdit(' + i + ',\'dinner\')">change</button>';
     }
     html += '</div>';
