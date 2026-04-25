@@ -502,6 +502,11 @@ var RECIPES = [
    ingredients:["Potatoes","Frozen green peas","Cauliflower","Onions","Tomatoes","Pav rolls","Butter","Pav bhaji masala","Coriander leaves","Lemon","Salt"],
    nutrition:{cal:540,protein:14,carbs:74,fat:18,fiber:10}},
 
+  {name:"Cauliflower Sabzi with Roti", time:"medium",
+   note:"Dry masala style. Cook on high heat to get slight char. Add a pinch of amchur at the end.",
+   ingredients:["Cauliflower","Frozen roti","Onions","Tomatoes","Ginger","Garlic","Cumin seeds","Turmeric","Red chili powder","Coriander powder","Amchur","Oil","Salt"],
+   nutrition:{cal:360,protein:9,carbs:50,fat:13,fiber:7}},
+
   {name:"Veg Biryani", time:"long",
    note:"Ranveer Brar dum sealing technique. Worth the weekend effort.",
    ingredients:["Basmati rice","Mixed vegetables","Full-fat yogurt","Fried onions","Saffron","Cardamom","Cloves","Bay leaf","Ghee","Mint leaves","Coriander leaves","Biryani masala","Salt"],
@@ -881,8 +886,7 @@ function getMealIngredients() {
   var items = [];
   for (var i = 0; i < plan.length; i++) {
     var meals = plan[i].lunch.name === plan[i].dinner.name
-      ? [plan[i].lunch]
-      : [plan[i].lunch, plan[i].dinner];
+      ? [plan[i].lunch] : [plan[i].lunch, plan[i].dinner];
     for (var j = 0; j < meals.length; j++) {
       var ings = meals[j].ingredients || [];
       for (var k = 0; k < ings.length; k++) {
@@ -1003,44 +1007,26 @@ function exportList() {
 function renderRecipes(q) {
   q = (q || '').toLowerCase();
   var list = q ? RECIPES.filter(function(r){ return r.name.toLowerCase().indexOf(q) !== -1; }) : RECIPES;
-  var timeLabel = {quick:'⚡ Quick (under 25 min)', medium:'🕐 Medium (25–40 min)', prep:'💧 Soak ahead', long:'⏳ Weekend cook'};
 
-  function buildSection(items, sectionLabel) {
-    var groups = {quick:[], medium:[], prep:[], long:[]};
-    for (var i = 0; i < items.length; i++) {
-      var t = items[i].time;
-      if (groups[t]) groups[t].push(items[i]);
-    }
-    var html = '';
-    var keys = ['quick','medium','prep','long'];
-    var hasAny = false;
-    for (var k = 0; k < keys.length; k++) {
-      if (groups[keys[k]].length) { hasAny = true; break; }
-    }
-    if (!hasAny) return '';
-    html += '<div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--muted);padding:14px 0 6px;border-bottom:2px solid var(--border);margin-bottom:8px">' + sectionLabel + '</div>';
-    for (var k = 0; k < keys.length; k++) {
-      var key = keys[k];
-      if (!groups[key].length) continue;
-      html += '<div class="gcat-hdr">' + timeLabel[key] + '</div>';
-      for (var i = 0; i < groups[key].length; i++) {
-        var r = groups[key][i];
-        var mainDish = r.name.split(' with ')[0].split(' With ')[0];
-        var query = encodeURIComponent(mainDish + ' recipe');
-        html += '<div class="recipe-item" style="cursor:pointer" onclick="window.open(\'https://www.youtube.com/results?search_query=' + query + '\',\'_blank\')">';
-        html += '<div class="recipe-name">' + r.name + mealTag(r) + ' <span style="font-size:0.65rem;color:var(--muted);font-weight:400">▶ YouTube</span></div>';
-        html += '</div>';
-      }
-    }
+  function recipeItem(r) {
+    var mainDish = r.name.split(' with ')[0].split(' With ')[0];
+    var query = encodeURIComponent(mainDish + ' recipe');
+    return '<div class="recipe-item" style="cursor:pointer" onclick="window.open(\'https://www.youtube.com/results?search_query=' + query + '\',\'_blank\')">'
+      + '<div class="recipe-name">' + r.name + mealTag(r) + ' <span style="font-size:0.65rem;color:var(--muted);font-weight:400">▶ YouTube</span></div>'
+      + '</div>';
+  }
+
+  function buildSection(items, label) {
+    if (!items.length) return '';
+    var sorted = items.slice().sort(function(a,b){ return a.name.localeCompare(b.name); });
+    var html = '<div class="gcat-hdr">' + label + '</div>';
+    for (var i = 0; i < sorted.length; i++) html += recipeItem(sorted[i]);
     return html;
   }
 
-  var vegList    = list.filter(function(r){ return !r.egg && !r.nonveg; });
-  var eggList    = list.filter(function(r){ return r.egg; });
-  var nonvegList = list.filter(function(r){ return r.nonveg; });
-  var html = buildSection(vegList, '🥦 Vegetarian');
-  if (eggList.length)    html += buildSection(eggList,    '🥚 Egg');
-  if (nonvegList.length) html += buildSection(nonvegList, '🍗 Chicken');
+  var html = buildSection(list.filter(function(r){ return !r.egg && !r.nonveg; }), '🥦 Veg');
+  html    += buildSection(list.filter(function(r){ return r.egg; }),               '🥚 Eggs');
+  html    += buildSection(list.filter(function(r){ return r.nonveg; }),            '🍗 Non-Veg');
   document.getElementById('recipeList').innerHTML = html || '<div class="empty">No recipes found</div>';
 }
 
